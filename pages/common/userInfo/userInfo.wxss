@@ -1,0 +1,17 @@
+/* userInfo.wxss */
+@import '/utils/demonStyle.wxss';
+
+.rankbox .demon_userInfo_content{
+  width: 460rpx;
+  border-radius: 4rpx;
+}
+
+.rankbox .demon_userInfo_content_item text{
+  display: block;
+  color: #ffffff;
+  font: 32rpx 'PingFang';
+  vertical-align: text-top;
+}
+.rankbox .demon_userInfo_content_item text:nth-child(2){
+  margin-top: 20rpx;
+}

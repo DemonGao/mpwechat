@@ -1,0 +1,57 @@
+<view class="container">
+  <image src="{{jumbotronSrc}}" class="demon_jumbotron"></image>
+  <view class="demon_tabBox" style="height:{{tabBox.height}}">
+    <view class="demon_tab">
+      <view bindtap="bindViewTap" class="demon_tab_item {{tabSetting.selectIndex==index ? 'active' :''}}" wx:for="{{tabSetting.item}}" wx:key="item" data-index="{{index}}">
+        {{item}}
+      </view>
+    </view>
+    <!--群排行-->
+    <view class="demon_tab_content" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==0}}">
+      <view class="demon_userInfo rankbox">
+  <view class="demon_userImg">
+    <image src="http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0" class="demon_img"></image>
+  </view>
+  <view class="demon_userInfo_content">
+    <view class="demon_userInfo_content_item">
+      <text class="text">{{result.friendNum}}</text>
+      <text class="text">好友数</text>
+    </view>
+    <view class="demon_userInfo_content_item">
+      <text class="text">{{result.newclientNum}}</text>
+      <text class="text">本周新客户</text>
+    </view>
+    <view class="demon_userInfo_content_item">
+      <text class="text">{{result.allclientNum}}</text>
+      <text class="text">积累客户</text>
+    </view>
+  </view>
+</view>
+    </view>
+    <!--群动态-->
+    <view class="demon_tab_content dynamicgroup" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==1}}">
+      <view class="nomsgBox" wx:if="{{tabSetting.data1.length==0}}">
+        <image class="nomsgimg" src="./../../static/img/nomsg.png"></image>
+        <view class="nomsgtext">这里有点冷清 ～</view>
+      </view>
+      <view class="demon_tab_content_item" wx:for="{{tabSetting.data1}}" wx:key="item">
+        <image src="http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0" class="userImg"></image>
+        <view class="others">
+          <view class="nickname">
+            <text class="nick">{{item.nickName}}</text>
+            <text class="nick">{{item.type}}</text>
+            <text class="time">{{item.time}}</text>
+          </view>
+          <view class="share">
+            <image class="img" src="{{item.share.img}}"></image>
+            <text class="word">{{item.share.content}}</text>
+            <!--<text class="word">{{item.share.content}}</text>-->
+          </view>
+        </view>
+      </view>
+    </view>
+    <button class="demon_btn" type="primary" open-type="share" size="{{tabSetting.btn.primarySize}}" loading="{{tabSetting.btn.loading}}" plain="{{tabSetting.btn.plain}}" disabled="{{tabSetting.btn.disabled}}">
+      分 享
+    </button>
+  </view>
+</view>

@@ -1,0 +1,20 @@
+<!--userInfo.wxml-->
+<view class="demon_userInfo rankbox">
+  <view class="demon_userImg">
+    <image src="http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0" class="demon_img"></image>
+  </view>
+  <view class="demon_userInfo_content">
+    <view class="demon_userInfo_content_item">
+      <text>{{result.friendNum}}</text>
+      <text>好友数</text>
+    </view>
+    <view class="demon_userInfo_content_item">
+      <text>{{result.newclientNum}}</text>
+      <text>本周新客户</text>
+    </view>
+    <view class="demon_userInfo_content_item">
+      <text>{{result.allclientNum}}</text>
+      <text>积累客户</text>
+    </view>
+  </view>
+</view>

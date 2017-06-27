@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/share/share",
+    "pages/common/modal/modal",
+    "pages/common/userInfo/userInfo"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "获客排行榜",
+    "navigationBarTextStyle": "black"
+  }
+}
