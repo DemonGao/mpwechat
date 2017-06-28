@@ -1,6 +1,6 @@
 /**index.wxss**/
 @import '/utils/demonStyle.wxss';
-
+@import '/utils/weui-loading.wxss';
 page {
   background-color: #1a523f;
 }

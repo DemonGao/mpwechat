@@ -59,7 +59,7 @@ Page({
             img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
             content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
           },
-          
+
         },
         {
           userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
@@ -125,7 +125,9 @@ Page({
     },
     userInfo: {},
     showModalStatus: false,
-    friendNum: undefined
+    friendNum: undefined,
+    dynamicgroup_load: false,
+    rank_load: false
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -264,5 +266,21 @@ Page({
     this.setData({
       friendNum: e.detail.value
     })
-  }
+  },
+  lower(e) {
+    var that = this;
+    console.log(e)
+    this.setData(
+      {
+        dynamicgroup_load: true
+      }
+    );
+    setTimeout(() => {
+      this.setData(
+        {
+          dynamicgroup_load: false
+        }
+      );
+    }, 1000);
+  },
 })

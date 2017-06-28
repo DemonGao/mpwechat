@@ -267,9 +267,11 @@ Page({
       friendNum: e.detail.value
     })
   },
+  //上拉加载
   lower(e) {
     var that =  this;
     console.log(e)
+    if (this.data.dynamicgroup_load === true){return ;}
     this.setData(
       {
         dynamicgroup_load: true
