@@ -30,10 +30,12 @@
     </view>
     <!--群动态-->
     <view class="demon_tab_content dynamicgroup" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==1}}">
+      <!--没有数据时-->
       <view class="nomsgBox" wx:if="{{tabSetting.data1.length==0}}">
         <image class="nomsgimg" src="./../../static/img/nomsg.png"></image>
         <view class="nomsgtext">这里有点冷清 ～</view>
       </view>
+      <!--有数据时-->
       <view class="demon_tab_content_item" wx:for="{{tabSetting.data1}}" wx:key="item">
         <image src="http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0" class="userImg"></image>
         <view class="others">
@@ -49,6 +51,7 @@
           </view>
         </view>
       </view>
+      <!--上拉加载-->
     </view>
     <button class="demon_btn" type="primary" open-type="share" size="{{tabSetting.btn.primarySize}}" loading="{{tabSetting.btn.loading}}" plain="{{tabSetting.btn.plain}}" disabled="{{tabSetting.btn.disabled}}">
       分 享

@@ -134,8 +134,9 @@
 /*用户信息样式*/
 .demon_userInfo{
   position: relative;
-  top: 0;
-  
+  height: 330rpx;
+  /*top: 0;*/
+
 }
 /*用户信息样式 - 头像*/
 .demon_userInfo .demon_userImg{
@@ -172,5 +173,3 @@
 .demon_userInfo .demon_userInfo_content .demon_userInfo_content_item{
   text-align: center;
 }
-
-

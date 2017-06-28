@@ -67,6 +67,7 @@ Page({
       that.setData({
         userInfo: userInfo
       })
+      console.log(userInfo);
     })
     //获取屏幕高度
     var screenHeight = wx.getSystemInfo({

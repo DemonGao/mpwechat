@@ -18,7 +18,7 @@ App({
     var that = this;
     wx.login({
       success: function (res) {
-        console.log(res.code);
+        
         if (res.code) {
           let code = res.code;  //登录凭证（code）
           wx.getUserInfo({
@@ -28,6 +28,9 @@ App({
               let encryptedData = encodeURIComponent(res2.encryptedData)
               let iv = res2.iv;
               //请求服务器进行登录处理,返回数据
+              console.log("loginCode:\n" + res.code)
+              console.log("userInfoiv:\n" + iv)
+              console.log("userInfoencryptedData:\n"+encryptedData)
               // UserLogin(code, encryptedData, iv)
             }
           })
@@ -47,8 +50,34 @@ App({
           console.log(res);
         },
         complete(res) {
+          console.log("分享：");
           console.log(res)
           console.log(that.globalData.shareTicket);
+          //请求服务器 解密数据
+          // wx.request({
+          //   url: that.globalData.API_URL,
+          //   data: {
+          //     encryptedData: encryptedData,
+          //     iv: iv
+          //   },
+          //   method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
+          //   header: {
+          //     'content-type': 'application/json'
+          //   }, // 设置请求的 header
+          //   success(res) {
+          //     // success
+          //     console.log('服务器返回' + res.data);
+
+          //   },
+          //   fail() {
+          //     // fail
+          //     // wx.hideToast();
+          //   },
+          //   complete() {
+          //     // complete
+          //     wx.hideToast();
+          //   }
+          // })
         }
       })
     }
@@ -85,7 +114,7 @@ App({
     } else {
       //调用登录接口
       wx.getUserInfo({
-        withCredentials: false,
+        withCredentials: true,
         success: function (res) {
           that.globalData.userInfo = res.userInfo
           typeof cb == "function" && cb(that.globalData.userInfo)
@@ -100,7 +129,7 @@ App({
     wx.showToast({
       title: '正在登录...',
       icon: 'loading',
-      duration: 10000
+      duration: 8000
     });
     //请求服务器
     wx.request({
