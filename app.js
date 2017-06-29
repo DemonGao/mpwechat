@@ -16,7 +16,7 @@ App({
     var that = this;
     //登陆态验证   检测当前用户登录态是否有效
     // that.checkSession();
-    that.login();
+    // that.login();
 
     //用户进入场景值判断 options.scene
     if (options.scene == 1044) {
@@ -135,7 +135,9 @@ App({
     });
     util.ajax('services/hkphb/login', {
       code: code,
-      session_3rd: that.globalData.session_3rd
+      session_3rd: that.globalData.session_3rd,
+      userInfoEncryptedData: encryptedData,
+      userInfoIv: iv
     }, 'POST', function (res){
       //success
       let result = res.data;
@@ -143,18 +145,6 @@ App({
       if (result.code === "SUCCESS") {
         //存储session_3rd
         wx.setStorageSync("session_3rd", result.body.session_3rd)
-        if (!result.body.hava_user_info) {
-          console.log(that.globalData.session_3rd);
-          //若hava_user_info为false 则 将encryptedData iv 保存到数据库
-          util.ajax('services/hkphb/decodeAndSaveUserInfo',{
-            session_3rd: wx.getStorageSync("session_3rd"),
-            userInfoEncryptedData: encryptedData,
-            userInfoIv: iv
-          },'POST',function (res){
-            //complete
-            console.log("发送完整用户信息的加密数据给后台解析  -- 请求成功");
-          })
-        }
       }
     },function(){
       wx.hideToast();
