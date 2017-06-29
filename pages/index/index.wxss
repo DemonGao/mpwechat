@@ -1,5 +1,5 @@
 /**index.wxss**/
-@import '/utils/demonStyle.wxss';
+@import '/utils/css/demonStyle.wxss';
 
 page {
   background-color: #1a523f;

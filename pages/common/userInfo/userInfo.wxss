@@ -1,5 +1,5 @@
 /* userInfo.wxss */
-@import '/utils/demonStyle.wxss';
+@import '/utils/css/demonStyle.wxss';
 
 .demon_userInfo_content{
   width: 460rpx;

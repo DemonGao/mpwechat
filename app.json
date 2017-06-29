@@ -5,7 +5,8 @@
     "pages/share/share",
     "pages/common/modal/modal",
     "pages/common/userInfo/userInfo",
-    "pages/test/test"
+    "pages/test/test",
+    "pages/common/error/error"
   ],
   "window": {
     "backgroundTextStyle": "light",
