@@ -14,57 +14,7 @@ App({
    */
   onLaunch(options) {
     var that = this;
-    //登陆态验证   检测当前用户登录态是否有效
-    that.checkSession();
-    // that.login();
-    //用户进入场景值判断 options.scene
-    if (options.scene == 1044) {
-      console.log("1044: 带shareTicket的小程序消息卡片");
-      that.globalData.shareTicket = options.shareTicket;
-      wx.getShareInfo({
-        shareTicket: that.globalData.shareTicket,
-        fail(res) {
-          console.log(res);
-        },
-        complete(res) {
-          console.log("分享：");
-          console.log(res)
-          console.log(that.globalData.shareTicket);
-          //请求服务器 解密数据
-          util.ajax('/services/hkphb/loadCurriculumRankingList',{
-            
-          },'POST',function(){
-            // success
-          },function(){
-            // complete
-          })
-          // wx.request({
-          //   url: that.globalData.API_URL,
-          //   data: {
-          //     encryptedData: encryptedData,
-          //     iv: iv
-          //   },
-          //   method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
-          //   header: {
-          //     'content-type': 'application/json'
-          //   }, // 设置请求的 header
-          //   success(res) {
-          //     // success
-          //     console.log('服务器返回' + res.data);
-
-          //   },
-          //   fail() {
-          //     // fail
-          //     // wx.hideToast();
-          //   },
-          //   complete() {
-          //     // complete
-          //     wx.hideToast();
-          //   }
-          // })
-        }
-      })
-    }
+    
   },
   //获取用户信息
   getUserInfo(cb) {
@@ -92,6 +42,7 @@ App({
       },
       fail: function () {
         //登录态过期 重新登录(获取登陆凭证)
+        console.log("session过期");
         this.login();
       }
     })
@@ -163,6 +114,31 @@ App({
     var that = this
     //登陆态验证   检测当前用户登录态是否有效
     that.checkSession();
+    // that.login();
+    //用户进入场景值判断 options.scene
+    if (options.scene == 1044) {
+      console.log("1044: 带shareTicket的小程序消息卡片");
+      that.globalData.shareTicket = options.shareTicket;
+      wx.getShareInfo({
+        shareTicket: that.globalData.shareTicket,
+        fail(res) {
+          console.log(res);
+        },
+        complete(res) {
+          console.log("分享：");
+          console.log(res)
+          console.log('shareTicket: \n' + that.globalData.shareTicket);
+          //请求服务器 解密数据
+          // util.ajax('/services/hkphb/loadCurriculumRankingList',{
+
+          // },'POST',function(){
+          //   // success
+          // },function(){
+          //   // complete
+          // })
+        }
+      })
+    }
   },
 
   /**
