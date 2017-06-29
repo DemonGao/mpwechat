@@ -14,6 +14,7 @@ App({
    */
   onLaunch(options) {
     var that = this;
+    // that.login();
   },
   //获取用户信息
   getUserInfo(cb) {
@@ -27,22 +28,32 @@ App({
         success: function (res) {
           that.globalData.userInfo = res.userInfo
           typeof cb == "function" && cb(that.globalData.userInfo)
+        },
+        fail:function(){
+          console.log("授权失败");
+          wx.reLaunch({
+            url: '../common/error/error?type=userInfo'
+          })
         }
       })
     }
   },
   //登陆态验证   检测当前用户登录态是否有效
   checkSession() {
+    var that = this;
     //验证
     wx.checkSession({
       success: function () {
         //session 未过期，并且在本生命周期一直有效
         console.log("session未过期");
+        console.log(wx.getStorageSync("session_3rd"))
+        //检查是否有工作室
+        that.checkIsFinancialPlanner();
       },
       fail: function () {
         //登录态过期 重新登录(获取登陆凭证)
         console.log("session过期");
-        this.login();
+        that.login();
       }
     })
   },
@@ -60,9 +71,6 @@ App({
               let encryptedData = encodeURIComponent(res2.encryptedData)
               let iv = res2.iv;
               //请求服务器进行登录处理,返回数据
-              // console.log("loginCode:\n" + res.code)
-              console.log("userInfoiv:\n" + iv)
-              console.log("userInfoencryptedData:\n" + encryptedData)
               that.UserLogin(code, encryptedData, iv)
             }
           })
@@ -104,6 +112,20 @@ App({
       }
     },function(){
       wx.hideToast();
+    })
+  },
+  //检查是否有工作室
+  checkIsFinancialPlanner(){
+    util.ajax('services/hkphb/checkIsFinancialPlanner', {
+      session_3rd: wx.getStorageSync("session_3rd")
+    }, 'POST', function (res) {
+      if (res.data.code != "SUCCESS") {
+        wx.reLaunch({
+          url: '../common/error/error?type=notHaveWorkspace'
+        })
+      }
+    }, function () {
+      console.log("checkIsFinancialPlanner");
     })
   },
   /**
