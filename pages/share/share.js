@@ -1,4 +1,5 @@
 //index.js
+var util = require('../../utils/util.js')
 //获取应用实例
 var app = getApp()
 Page({
@@ -12,6 +13,7 @@ Page({
       selectIndex: 0,
       rankHeight: '',
       btn: {
+        btnText:'签到',
         defaultSize: 'default',
         primarySize: 'default',
         warnSize: 'default',
@@ -138,6 +140,13 @@ Page({
   },
   onLoad: function () {
     var that = this
+
+    util.ajax("checkIsSign",{
+      session_3rd: wx.getStorageSync("session_3rd")
+    },"POST",function(res){
+      console.log(res);
+    })
+
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
@@ -239,9 +248,16 @@ Page({
       }
       //关闭 
       if (currentStatu == "ok") {
+        wx.showLoading({
+          title: '加载中',
+        })
+        
         this.setData(
           {
-            showModalStatus: false
+            showModalStatus: false,
+            'tabSetting.btn.disabled':true,
+            'tabSetting.btn.btnText':'已签到'
+
           }
         );
         console.log("ok")

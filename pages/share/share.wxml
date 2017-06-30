@@ -61,7 +61,7 @@
       </scroll-view>
     </view>
     <button class="demon_btn" type="primary" size="{{tabSetting.btn.primarySize}}" loading="{{tabSetting.btn.loading}}" plain="{{tabSetting.btn.plain}}" disabled="{{tabSetting.btn.disabled}}" bindtap="powerDrawer" data-statu="open">
-      签到
+      {{tabSetting.btn.btnText}}
     </button>
   </view>
   <!--mask-->

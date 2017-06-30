@@ -18,7 +18,7 @@ function formatNumber(n) {
 
 /*----------------------------微信api封装----------------------------*/
 
-const API_URL = "https://xcx.d1money.com/";
+const API_URL = "https://xcx.d1money.com/services/hkphb/";
 // const API_URL = "http://192.168.0.137/";
 //微信本地存储 - 添加
 function setStorage(key, data){

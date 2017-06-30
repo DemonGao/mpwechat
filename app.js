@@ -97,7 +97,7 @@ App({
       icon: 'loading',
       duration: 8000
     });
-    util.ajax('services/hkphb/login', {
+    util.ajax('login', {
       code: code,
       session_3rd: wx.getStorageSync("session_3rd"),
       userInfoEncryptedData: encryptedData,
@@ -116,7 +116,7 @@ App({
   },
   //检查是否有工作室
   checkIsFinancialPlanner(){
-    util.ajax('services/hkphb/checkIsFinancialPlanner', {
+    util.ajax('checkIsFinancialPlanner', {
       session_3rd: wx.getStorageSync("session_3rd")
     }, 'POST', function (res) {
       if (res.data.code != "SUCCESS") {
@@ -150,7 +150,7 @@ App({
           console.log(res)
           console.log('shareTicket: \n' + that.globalData.shareTicket);
           //请求服务器 解密数据
-          // util.ajax('/services/hkphb/loadCurriculumRankingList',{
+          // util.ajax('loadCurriculumRankingList',{
 
           // },'POST',function(){
           //   // success
