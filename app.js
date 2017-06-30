@@ -179,7 +179,9 @@ App({
           util.ajax('loadGroupDynamics', {
             openGIdEncryptedData: encodeURIComponent(res.encryptedData),
             openGIdIv: res.iv,
-            session_3rd: wx.getStorageSync("session_3rd")
+            session_3rd: wx.getStorageSync("session_3rd"),
+            start:0,
+            limit:10
           }, 'POST', function (res) {
             // success
             console.info(res);

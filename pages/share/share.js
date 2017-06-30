@@ -99,7 +99,8 @@ Page({
     userInfo: {},
     showModalStatus: false,
     friendNum: undefined,
-    dynamicgroup_load: false,
+    dynamicgroup_load: true,
+    dynamicgroup_nextPage: false,
     rank_load: true
   },
   //事件处理函数
