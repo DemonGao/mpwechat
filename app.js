@@ -16,54 +16,43 @@ App({
     var that = this;
     // that.login();
   },
-  //获取用户信息
-  getUserInfo(cb) {
-    var that = this
-    if (this.globalData.userInfo) {
-      typeof cb == "function" && cb(this.globalData.userInfo)
-    } else {
-      //调用登录接口
-      wx.getUserInfo({
-        withCredentials: true,
-        success: function (res) {
-          that.globalData.userInfo = res.userInfo
-          typeof cb == "function" && cb(that.globalData.userInfo)
-        },
-        fail:function(){
-          console.log("授权失败");
-          wx.reLaunch({
-            url: '../common/error/error?type=userInfo'
-          })
-        }
-      })
-    }
-  },
   //登陆态验证   检测当前用户登录态是否有效
-  checkSession() {
+  checkSession(fn) {
     var that = this;
     //验证
     wx.checkSession({
       success: function () {
         //session 未过期，并且在本生命周期一直有效
-        console.log("session未过期");
-        console.log(wx.getStorageSync("session_3rd"))
-        //检查是否有工作室
-        that.checkIsFinancialPlanner();
+        // console.log("session未过期");
+        // console.log(wx.getStorageSync("session_3rd"))
+        util.ajax('checkSession',{
+          session_3rd: wx.getStorageSync("session_3rd")
+        },'POST',function(res){
+          console.log(res);
+          if(res.data.code == "SUCCESS"){
+            //检查是否有工作室 若无工作室则跳转到error页面
+            that.checkIsFinancialPlanner();
+            if (typeof fn == "function") fn()
+          }else{
+            that.login();
+          } 
+        })
       },
       fail: function () {
         //登录态过期 重新登录(获取登陆凭证)
-        console.log("session过期");
+        // console.log("session过期");
         that.login();
       }
     })
   },
   //获取登录凭证（code）
-  login() {
+  login(fn) {
     var that = this;
     wx.login({
       success: function (res) {
         if (res.code) {
           let code = res.code;  //登录凭证（code）
+          console.log(res.code);
           wx.getUserInfo({
             //获取用户信息
             success(res2) {
@@ -71,7 +60,13 @@ App({
               let encryptedData = encodeURIComponent(res2.encryptedData)
               let iv = res2.iv;
               //请求服务器进行登录处理,返回数据
-              that.UserLogin(code, encryptedData, iv)
+              that.UserLogin(code, encryptedData, iv, fn)
+            },
+            fail: function () {
+              console.log("授权失败");
+              wx.reLaunch({
+                url: '../common/error/error?type=userInfo'
+              })
             }
           })
         } else {
@@ -89,7 +84,7 @@ App({
    *    iv: 加密算法的初始向量(wx.getUserInfo)
    * }
    */
-  UserLogin(code, encryptedData, iv) {
+  UserLogin(code, encryptedData, iv, fn) {
     var that = this;
     //创建一个dialog
     wx.showToast({
@@ -102,20 +97,22 @@ App({
       session_3rd: wx.getStorageSync("session_3rd"),
       userInfoEncryptedData: encryptedData,
       userInfoIv: iv
-    }, 'POST', function (res){
+    }, 'POST', function (res) {
       //success
       let result = res.data;
       //登陆验证成功 返回 session_3rd 并本地存储
       if (result.code === "SUCCESS") {
         //存储session_3rd
+        console.log("session_3rd: "+result.body.session_3rd)
         wx.setStorageSync("session_3rd", result.body.session_3rd)
+        if (typeof fn === 'function') fn();
       }
-    },function(){
+    }, function () {
       wx.hideToast();
     })
   },
   //检查是否有工作室
-  checkIsFinancialPlanner(){
+  checkIsFinancialPlanner() {
     util.ajax('checkIsFinancialPlanner', {
       session_3rd: wx.getStorageSync("session_3rd")
     }, 'POST', function (res) {
@@ -133,46 +130,67 @@ App({
    */
   onShow(options) {
     var that = this
-    //登陆态验证   检测当前用户登录态是否有效
-    that.checkSession();
     // that.login();
     //用户进入场景值判断 options.scene
-    if (options.scene == 1044) {
-      console.log("1044: 带shareTicket的小程序消息卡片");
-      that.globalData.shareTicket = options.shareTicket;
-      wx.getShareInfo({
-        shareTicket: that.globalData.shareTicket,
-        fail(res) {
-          console.log(res);
-        },
-        complete(res) {
-          console.log("分享：");
-          console.log(res)
-          console.log('shareTicket: \n' + that.globalData.shareTicket);
-          //请求服务器 解密数据
-          // util.ajax('loadCurriculumRankingList',{
-
-          // },'POST',function(){
-          //   // success
-          // },function(){
-          //   // complete
-          // })
-        }
-      })
+    switch (options.scene) {
+      // 1044: 带shareTicket的小程序消息卡片
+      case 1044:
+        console.log("1044: 带shareTicket的小程序消息卡片");
+        that.globalData.shareTicket = options.shareTicket;
+        break;
+      // default :
+      //   //登陆态验证   检测当前用户登录态是否有效
+      //   that.checkSession();
+      //   break;
     }
   },
-
-  /**
-   * 当小程序从前台进入后台，会触发 onHide
-   */
-  onHide() {
-
+  //通过 1044: 带shareTicket的小程序消息卡片 过来的事件
+  jumpSharePageFn(shareTicket, rankcb, groupcb) {
+    var that = this;
+    //微信分享信息
+    wx.getShareInfo({
+      shareTicket,
+      fail(res) {
+        console.log(res);
+      },
+      complete(res) {
+        // console.log("分享：");
+        // console.log(res)
+        // console.log('shareTicket: \n' + that.globalData.shareTicket);
+        that.checkSession(function(){
+          wx.showLoading({
+            title: '加载中',
+          })
+          //请求服务器 解密数据
+          util.ajax('loadCurriculumRankingList', {
+            openGIdEncryptedData: encodeURIComponent(res.encryptedData),
+            openGIdIv: res.iv,
+            session_3rd: wx.getStorageSync("session_3rd")
+          }, 'POST', function (res) {
+            // success
+            if(res.data.code === "SUCCESS"){
+              if (typeof rankcb === "function") rankcb(res)
+            }
+            
+          }, function () {
+            // complete
+          })
+          //请求服务器 解密数据
+          util.ajax('loadGroupDynamics', {
+            openGIdEncryptedData: encodeURIComponent(res.encryptedData),
+            openGIdIv: res.iv,
+            session_3rd: wx.getStorageSync("session_3rd")
+          }, 'POST', function (res) {
+            // success
+            console.info(res);
+            if (typeof groupcb === "function") groupcb(res);
+          }, function () {
+            // complete
+          })
+          
+        });
+      }
+    })
   },
 
-  /**
-   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息
-   */
-  onError(msg) {
-
-  },
 })
