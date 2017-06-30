@@ -21,37 +21,8 @@ Page({
         plain: false,
         loading: false
       },
-      data: [
-        {
-          nickName: '韩帅帅',
-          type: 1,
-          friendNum: 197,
-          newclientNum: 29,
-          allclientNum: 159
-        },
-        {
-          nickName: '韩帅帅',
-          type: 0,
-          friendNum: 197,
-          newclientNum: 29,
-          allclientNum: 159
-        },
-        {
-          nickName: '韩帅帅',
-          type: 1,
-          friendNum: 197,
-          newclientNum: 29,
-          allclientNum: 159
-        },
-        {
-          nickName: '韩帅帅',
-          type: 0,
-          friendNum: 197,
-          newclientNum: 29,
-          allclientNum: 159
-        },
-      ],
-      data1: [
+      rankdata: [],     //群排行数据
+      groupdata: [
         {
           userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
           nickName: '韩帅帅',
@@ -129,7 +100,7 @@ Page({
     showModalStatus: false,
     friendNum: undefined,
     dynamicgroup_load: false,
-    rank_load: false
+    rank_load: true
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -140,33 +111,29 @@ Page({
   },
   onLoad: function () {
     var that = this
-
-    util.ajax("checkIsSign",{
-      session_3rd: wx.getStorageSync("session_3rd")
-    },"POST",function(res){
-      console.log(res);
-    })
-
+    that.checkIsSign();
+    // that.loadCurriculumRankingList();
+    // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
+    app.jumpSharePageFn(app.globalData.shareTicket,function(result){
+      //群排行数据回掉
+      that.setData({
+        'tabSetting.rankdata': result.data.body,
+        'rank_load': false
+      })
+      
+    },function(result){
+      //群动态数据回调
+    });
+    
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
-    })
-    //调用应用实例的方法获取全局数据
-    app.getUserInfo(function (userInfo) {
-      //更新数据
-      that.setData({
-        userInfo: userInfo
-      })
-      console.log(userInfo)
     })
     //获取屏幕高度
     var screenHeight = wx.getSystemInfo({
       success: function (res) {
         screenHeight = res.windowHeight;
-        console.log(screenHeight)
-        console.log(screenHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88));
         var rankHeight = screenHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46;
-        console.log(rankHeight);
         that.setData({
           'tabSetting.rankHeight': rankHeight + 'px'
         })
@@ -248,27 +215,10 @@ Page({
       }
       //关闭 
       if (currentStatu == "ok") {
-        wx.showLoading({
-          title: '加载中',
-        })
-        
-        this.setData(
-          {
-            showModalStatus: false,
-            'tabSetting.btn.disabled':true,
-            'tabSetting.btn.btnText':'已签到'
-
-          }
-        );
-        console.log("ok")
-        wx.showToast({
-          title: '今日好友数' + this.data.friendNum,
-          icon: 'success',
-          duration: 2000
-        })
+        this.userSign();
+      
       }
     }.bind(this), 200)
-
     // 显示 
     if (currentStatu == "open") {
       this.setData(
@@ -277,6 +227,57 @@ Page({
         }
       );
     }
+  },
+  //签到判断
+  checkIsSign(){
+    var that = this;
+    util.ajax("checkIsSign", {
+      session_3rd: wx.getStorageSync("session_3rd")
+    }, "POST", function (res) {
+      console.log(res);
+      if (res.data.code == "SUCCESS") {
+        //SUCCESS 是没签到
+        that.setData(
+          {
+            'tabSetting.btn.disabled': false,
+            'tabSetting.btn.btnText': '签到'
+          }
+        );
+      }else{
+        that.setData(
+          {
+            'tabSetting.btn.disabled': true,
+            'tabSetting.btn.btnText': '已签到'
+          }
+        );
+      }
+    })
+  },
+  //签到
+  userSign(){
+    var that = this;
+    wx.showLoading({
+      title: '加载中',
+    })
+    util.ajax('SignCommit',{
+      intradayfriendNumber: that.data.friendNum,
+      session_3rd: wx.getStorageSync("session_3rd")
+    },'POST',function(res){
+      console.info("签到")
+      console.log(res);
+      that.setData(
+        {
+          showModalStatus: false,
+          'tabSetting.btn.disabled': true,
+          'tabSetting.btn.btnText': '已签到'
+        }
+      );
+      wx.showToast({
+        title: '今日好友数' + that.data.friendNum,
+        icon: 'success',
+        duration: 2000
+      })
+    })
   },
   bindKeyInput(e) {
     this.setData({

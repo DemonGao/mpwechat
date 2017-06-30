@@ -1,4 +1,5 @@
 //index.js
+var util = require('../../utils/util.js')
 //获取应用实例
 var app = getApp()
 Page({
@@ -19,34 +20,12 @@ Page({
         plain: false,
         loading: false
       },
-      data: [
-        {
-          nickName: '韩帅帅',
-          type: 1,
-          friendNum: 197,
-          newclientNum: 29,
-          allclientNum: 159
-        },
-        {
-          nickName: '韩帅帅',
-          type: 0,
-          friendNum: 197,
-          newclientNum: 29,
-          allclientNum: 159
-        },
-      ],
-      data1: [
-        
-      ]
+      
     },
     userInfo: {},
     showModalStatus: false,
     friendNum: undefined,
-    result: { //个人排行榜
-      friendNum: 22,
-      newclientNum: 46,
-      allclientNum: 110
-    }
+    result: {}//个人排行榜
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -56,18 +35,20 @@ Page({
     })
   },
   onLoad: function () {
-    var that = this
+    var that = this;
+    app.checkSession(function(){
+      util.ajax('fpUserData',{
+        session_3rd: wx.getStorageSync("session_3rd")
+      },'POST',function(res){
+        console.log(res.data);
+        that.setData({
+          result: res.data.body
+        })
+      })
+    });
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
-    })
-    //调用应用实例的方法获取全局数据
-    app.getUserInfo(function (userInfo) {
-      //更新数据
-      that.setData({
-        userInfo: userInfo
-      })
-      console.log(userInfo);
     })
     //获取屏幕高度
     var screenHeight = wx.getSystemInfo({

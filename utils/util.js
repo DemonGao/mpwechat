@@ -17,18 +17,17 @@ function formatNumber(n) {
 }
 
 /*----------------------------微信api封装----------------------------*/
-
+var app = getApp();
 const API_URL = "https://xcx.d1money.com/services/hkphb/";
 // const API_URL = "http://192.168.0.137/";
 //微信本地存储 - 添加
-function setStorage(key, data){
+function setStorage(key, data) {
   wx.setStorage({
     key,
     data
   })
 }
-function ajax(url, data, type, success, complete, fail){
-  
+function ajax(url, data, type, success, complete, fail) {
   wx.request({
     url: API_URL + url,
     data,
@@ -38,12 +37,13 @@ function ajax(url, data, type, success, complete, fail){
     }, // 设置请求的 header
     success(res) {
       // success
-      console.log('ajax成功');
-      console.log(res.data)
       if (success) success(res)
-      
-      if(res.data.code != "SUCCESS"){
+      if (res.data.code != "SUCCESS") {
         console.error(`fail: 错误码:${res.data.code},错误信息:${res.data.msg}`)
+      } else if (res.data.code == "000002") {
+        //"SESSION_3RD 超时"
+        console.error("SESSION_3RD 超时");
+        app.login();
       }
     },
     fail() {
@@ -55,12 +55,17 @@ function ajax(url, data, type, success, complete, fail){
       // complete
       // console.log('ajax完成');
       wx.hideToast();
+      wx.hideNavigationBarLoading()
+      wx.setNavigationBarTitle({
+        title: '获客排行榜'
+      })
       if (complete) complete()
     }
   })
 }
+
 module.exports = {
   formatTime: formatTime,
   setStorage: setStorage,
-  ajax: ajax
+  ajax: ajax,
 }
