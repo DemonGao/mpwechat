@@ -55,6 +55,7 @@ function ajax(url, data, type, success, complete, fail) {
       // complete
       // console.log('ajax完成');
       wx.hideToast();
+      wx.hideLoading()
       wx.hideNavigationBarLoading()
       wx.setNavigationBarTitle({
         title: '获客排行榜'

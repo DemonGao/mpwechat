@@ -44,41 +44,6 @@ Page({
       'tabSetting.selectIndex': index
     })
   },
-  // onLoad: function () {
-  //   var that = this;
-  //   //要求小程序返回分享目标信息
-  //   wx.showShareMenu({
-  //     withShareTicket: true
-  //   })
-  //   //获取屏幕高度
-  //   var screenHeight = wx.getSystemInfo({
-  //     success: function (res) {
-  //       screenHeight = res.windowHeight;
-  //       var rankHeight = screenHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46;
-  //       that.setData({
-  //         'tabSetting.rankHeight': rankHeight + 'px'
-  //       })
-  //     }
-  //   })
-  //   app.checkSession(function(){
-  //     that.checkIsSign();
-  //     // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
-  //     app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
-  //       //群排行数据回掉
-  //       that.setData({
-  //         'tabSetting.rank.data': result.data.body,
-  //         'tabSetting.rank.load': false
-  //       })
-
-  //     }, function (result) {
-  //       //群动态数据回调
-  //       that.setData({
-  //         'tabSetting.dynamicgroup.data': result.data.body.data,
-  //         'tabSetting.dynamicgroup.load': false
-  //       })
-  //     });
-  //   });
-  // },
   onLoad: function () {
     var that = this;
     //要求小程序返回分享目标信息
@@ -95,25 +60,24 @@ Page({
         })
       }
     })
-    that.checkIsSign();
-    // that.loadCurriculumRankingList();
-    // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
-    app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
-      //群排行数据回掉
-      that.setData({
-        'tabSetting.rank.data': result.data.body,
-        'tabSetting.rank.load': false
-      })
+    app.checkSession(function(){
+      that.checkIsSign();
+      // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
+      app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
+        //群排行数据回掉
+        that.setData({
+          'tabSetting.rank.data': result.data.body,
+          'tabSetting.rank.load': false
+        })
 
-    }, function (result) {
-      //群动态数据回调
-      that.setData({
-        'tabSetting.dynamicgroup.data': result.data.body.data,
-        'tabSetting.dynamicgroup.load': false
-      })
+      }, function (result) {
+        //群动态数据回调
+        that.setData({
+          'tabSetting.dynamicgroup.data': result.data.body.data,
+          'tabSetting.dynamicgroup.load': false
+        })
+      });
     });
-
-    
   },
   //转发函数
   onShareAppMessage(res) {
@@ -240,18 +204,23 @@ Page({
     },'POST',function(res){
       console.info("签到")
       console.log(res);
-      that.setData(
-        {
-          showModalStatus: false,
-          'tabSetting.btn.disabled': true,
-          'tabSetting.btn.btnText': '已签到'
-        }
-      );
-      wx.showToast({
-        title: '今日好友数' + that.data.friendNum,
-        icon: 'success',
-        duration: 2000
+      that.loadCurriculumRankingList(function(result){
+        wx.hideLoading()
+        that.setData(
+          {
+            showModalStatus: false,
+            'tabSetting.btn.disabled': true,
+            'tabSetting.btn.btnText': '已签到'
+          }
+        );
+        wx.showToast({
+          // title: '今日好友数' + that.data.friendNum,
+          title: '签到成功',
+          icon: 'success',
+          duration: 2000
+        })
       })
+      
     })
   },
   bindKeyInput(e) {
@@ -280,6 +249,30 @@ Page({
       })
     });
   },
+  // 刷新群动态
+  loadCurriculumRankingList(fn){
+    var that = this;
+    wx.getShareInfo({
+      shareTicket: app.globalData.shareTicket,
+      fail(res) {
+        console.log(res);
+      },
+      complete(res) {
+        //请求服务器 解密数据
+        util.ajax('loadCurriculumRankingList', {
+          openGIdEncryptedData: encodeURIComponent(res.encryptedData),
+          openGIdIv: res.iv,
+          session_3rd: wx.getStorageSync("session_3rd")
+        }, 'POST', function (res) {
+          // success
+          console.info(res);
+          if (typeof fn === "function") fn(res);
+        }, function () {
+          // complete
+        })
+      }
+    })
+  },
   //加载群动态
   loadDynamicgroupDate(fn){
     var that = this;
@@ -289,9 +282,6 @@ Page({
         console.log(res);
       },
       complete(res) {
-          // wx.showLoading({
-          //   title: '加载中',
-          // })
         console.log(that.data.tabSetting.dynamicgroup.PageNum)
           that.setData({
             'tabSetting.dynamicgroup.PageNum': that.data.tabSetting.dynamicgroup.PageNum + 1

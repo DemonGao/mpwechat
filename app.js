@@ -31,8 +31,7 @@ App({
           // 如果session_3rd未过期
           if(res.data.code == "SUCCESS"){
             //检查是否有工作室 若无工作室则跳转到error页面
-            that.checkIsFinancialPlanner();
-            if (typeof fn == "function") fn()
+            that.checkIsFinancialPlanner(fn);
           } else {//session_3rd 过期或者未授权
             that.login(fn);
           } 
@@ -90,11 +89,6 @@ App({
   UserLogin(code, encryptedData, iv, fn) {
     var that = this;
     //创建一个dialog
-    // wx.showToast({
-    //   title: '正在登录...',
-    //   icon: 'loading',
-    //   duration: 8000
-    // });
     util.ajax('login', {
       code: code,
       session_3rd: wx.getStorageSync("session_3rd"),
@@ -109,24 +103,28 @@ App({
         console.log("session_3rd: "+result.body.session_3rd)
         wx.setStorageSync("session_3rd", result.body.session_3rd)
         //检查是否有工作室 若无工作室则跳转到error页面
-        that.checkIsFinancialPlanner();
-        if (typeof fn === 'function') fn();
+        that.checkIsFinancialPlanner(fn);
       }
     }, function () {
       wx.hideToast();
     })
   },
-  //检查是否有工作室
-  checkIsFinancialPlanner() {
+  //检查是否有工作室(理财师)
+  checkIsFinancialPlanner(fn) {
     util.ajax('checkIsFinancialPlanner', {
       session_3rd: wx.getStorageSync("session_3rd")
     }, 'POST', function (res) {
-      if (res.data.code != "SUCCESS") {
+      //如果是理财师
+      if (res.data.code === "SUCCESS") {
+        if (typeof fn === 'function') fn();
+      }else{
+        //如果不是理财师 跳转
         wx.reLaunch({
           url: '../common/error/error?type=notHaveWorkspace'
         })
       }
     }, function () {
+      //complete
       console.log("checkIsFinancialPlanner");
     })
   },
