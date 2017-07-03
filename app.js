@@ -8,6 +8,7 @@ App({
     session_3rd: wx.getStorageSync('session_3rd'),  //获取本地存储的session_3rd
     userInfo: null,
     shareTicket: "",
+
   },
   /**
    * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）

@@ -9,7 +9,7 @@
     </view>
     <!--群排行-->
     <view class="demon_tab_content" wx:if="{{tabSetting.selectIndex==0}}">
-      <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};" lower-threshold="50" bindscrolltolower="lower" scroll-with-animation="true">
+      <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};">
         <template is="loadding"  wx:if="{{rank_load}}"/>
         <view wx:if="{{!rank_load}}" class="demon_tab_content_item" wx:for="{{tabSetting.rankdata}}" wx:key="item">
           <text class="rank">{{index + 1}}</text>
@@ -37,27 +37,28 @@
     <!--群动态-->
     <view class="demon_tab_content dynamicgroup" wx:if="{{tabSetting.selectIndex==1}}">
       <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};" bindscrolltolower="lower" scroll-with-animation="true">
-        <view class="nomsgBox" wx:if="{{tabSetting.groupdata.length==0}}">
+        <view class="nomsgBox" wx:if="{{tabSetting.dynamicgroup.data.length==0 && !tabSetting.dynamicgroup.load}}">
           <image class="nomsgimg" src="./../../static/img/nomsg.png"></image>
           <view class="nomsgtext">这里有点冷清 ～</view>
         </view>
-        <template is="loadding"  wx:if="{{dynamicgroup_load}}"/>
-        <view wx:if="{{!dynamicgroup_load}}" class="demon_tab_content_item" wx:for="{{tabSetting.groupdata}}" wx:key="item">
-          <image src="http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0" class="userImg"></image>
+        <template is="loadding"  wx:if="{{tabSetting.dynamicgroup.load}}"/>
+        <view wx:if="{{!tabSetting.dynamicgroup.load}}" class="demon_tab_content_item" wx:for="{{tabSetting.dynamicgroup.data}}" wx:key="item">
+          <image src="{{item.imgUrl}}" class="userImg"></image>
           <view class="others">
             <view class="nickname">
-              <text class="nick">{{item.nickName}}</text>
-              <text class="nick">{{item.type}}</text>
-              <text class="time">{{item.time}}</text>
+              <text class="nick">{{item.realName}}</text>
+              <text class="nick" wx:if="{{item.type === 2}}">转发文章</text>
+              <text class="nick" wx:if="{{item.type === 3}}">阅读文章</text>
+              <text class="time">{{item.timeago}}</text>
             </view>
             <view class="share">
-              <image class="img" src="{{item.share.img}}"></image>
-              <text class="word">{{item.share.content}}</text>
+              <image class="img" src="{{item.articleHeadImg}}"></image>
+              <text class="word">{{item.title}}</text>
               <!--<text class="word">{{item.share.content}}</text>-->
             </view>
           </view>
         </view>
-        <view class="weui-loadmore" wx:if="{{dynamicgroup_nextPage}}">
+        <view class="weui-loadmore" wx:if="{{tabSetting.dynamicgroup.loadNextPage}}">
           <view class="weui-loading"></view>
           <text class="weui-loadmore__tips">正在加载</text>
         </view>

@@ -22,86 +22,22 @@ Page({
         loading: false
       },
       rankdata: [],     //群排行数据
-      groupdata: [
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '转发文章',
-          time: '3分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
-          },
-
-        },
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '分享文章',
-          time: '13分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次你的经历分配决定了你的层次你的经历分配决定了你的层次你的经历分配决定了你的层次你的经历分配决定了你的层次你的经历分配决定了你的层次 - 韩帅帅工作室'
-          }
-        },
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '转发文章',
-          time: '20分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
-          }
-        },
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '转发文章',
-          time: '20分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
-          }
-        },
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '转发文章',
-          time: '20分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
-          }
-        },
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '转发文章',
-          time: '20分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
-          }
-        },
-        {
-          userImg: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-          nickName: '韩帅帅',
-          type: '转发文章',
-          time: '20分钟前',
-          share: {
-            img: 'http://wx.qlogo.cn/mmopen/vi_32/rz4xqX0A7oyAPVbbqylbDcDQhZmibHHouwcxHPycLVfyicN3xEEXBOibdjw3LPN12UvedakfMO4y0ufAsKQIrfSfg/0',
-            content: '你的经历分配决定了你的层次 - 韩帅帅工作室'
-          }
-        }
-      ]
+      groupdata: [],     
+      dynamicgroup: {//群动态
+        data:[],
+        load: true,           //初始化加载loadding
+        loadNextPage: false,  //上拉刷新加载loadding
+        PageNum: 0,           //当前页数
+        Total:0               //总页数
+      }
     },
     userInfo: {},
     showModalStatus: false,
     friendNum: undefined,
+    rank_load: true,
     dynamicgroup_load: true,
     dynamicgroup_nextPage: false,
-    rank_load: true
+    dynamicgroup_PageNum:0
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -117,6 +53,8 @@ Page({
     // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
     app.jumpSharePageFn(app.globalData.shareTicket,function(result){
       //群排行数据回掉
+
+      
       that.setData({
         'tabSetting.rankdata': result.data.body,
         'rank_load': false
@@ -124,6 +62,10 @@ Page({
       
     },function(result){
       //群动态数据回调
+      that.setData({
+        'tabSetting.dynamicgroup.data': result.data.body.data,
+        'tabSetting.dynamicgroup.load': false
+      })
     });
     
     //要求小程序返回分享目标信息
@@ -285,20 +227,59 @@ Page({
       friendNum: e.detail.value
     })
   },
+  //群动态上拉加载
   lower(e) {
     var that = this;
-    console.log(e)
+    if (that.data.tabSetting.dynamicgroup.loadNextPage){
+      return ;
+    }
     this.setData(
       {
-        dynamicgroup_load: true
+        'tabSetting.dynamicgroup.loadNextPage': true
       }
     );
-    setTimeout(() => {
-      this.setData(
-        {
-          dynamicgroup_load: false
-        }
-      );
-    }, 1000);
+    this.loadDynamicgroupDate(function(result){
+      that.data.tabSetting.dynamicgroup.data.push.apply(that.data.tabSetting.dynamicgroup.data, result.data.body.data)
+      //群动态数据回调
+      that.setData({
+        'tabSetting.dynamicgroup.data': that.data.tabSetting.dynamicgroup.data,
+        'tabSetting.dynamicgroup.total': result.data.body.Total,
+        'tabSetting.dynamicgroup.loadNextPage': false
+      })
+    });
   },
+  //加载群动态
+  loadDynamicgroupDate(fn){
+    var that = this;
+    wx.getShareInfo({
+      shareTicket: app.globalData.shareTicket,
+      fail(res) {
+        console.log(res);
+      },
+      complete(res) {
+          // wx.showLoading({
+          //   title: '加载中',
+          // })
+        console.log(that.data.tabSetting.dynamicgroup.PageNum)
+          that.setData({
+            'tabSetting.dynamicgroup.PageNum': that.data.tabSetting.dynamicgroup.PageNum + 1
+          })
+          //请求服务器 解密数据
+          util.ajax('loadGroupDynamics', {
+            openGIdEncryptedData: encodeURIComponent(res.encryptedData),
+            openGIdIv: res.iv,
+            session_3rd: wx.getStorageSync("session_3rd") ,
+            start: that.data.tabSetting.dynamicgroup.PageNum,
+            limit: 10
+          }, 'POST', function (res) {
+            // success
+            console.info(res);
+            
+            if (typeof fn === "function") fn(res);
+          }, function () {
+            // complete
+          })
+      }
+    })
+  }
 })

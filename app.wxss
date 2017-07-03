@@ -12,7 +12,7 @@
 
 /* loadding.wxss */
 .spinner {
-  margin: 100px auto;
+  margin: 250rpx auto;
   width: 100rpx;
   height: 100rpx;
   position: relative;
