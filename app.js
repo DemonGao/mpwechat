@@ -157,7 +157,11 @@ App({
     wx.getShareInfo({
       shareTicket,
       fail(res) {
+        wx.hideLoading();
         console.log(res);
+        wx.reLaunch({
+          url: '../index/index'
+        })
       },
       complete(res) {
         // console.log("分享：");

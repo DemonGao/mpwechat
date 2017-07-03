@@ -65,6 +65,9 @@ Page({
     })
     app.checkSession(function () {
       that.checkIsSign();
+
+      if (app.globalData.shareTicket)
+        console.log(app.globalData.shareTicket)
       // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
       app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
         //群排行数据回掉
