@@ -13,7 +13,7 @@ Page({
       selectIndex: 0,
       rankHeight: '',
       btn: {
-        btnText:'签到',
+        btnText: '签到',
         defaultSize: 'default',
         primarySize: 'default',
         warnSize: 'default',
@@ -22,16 +22,16 @@ Page({
         loading: false
       },
       groupdata: [],
-      rank:{  //群排行
+      rank: {  //群排行
         data: [],
         load: true
       },
       dynamicgroup: {//群动态
-        data:[],
+        data: [],
         load: true,           //初始化加载loadding
         loadNextPage: false,  //上拉刷新加载loadding
         PageNum: 0,           //当前页数
-        Total:0               //总页数
+        Total: 0               //总页数
       }
     },
     showModalStatus: false,
@@ -46,6 +46,9 @@ Page({
   },
   onLoad: function () {
     var that = this;
+    wx.showLoading({
+      title: '加载中',
+    })
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
@@ -60,8 +63,11 @@ Page({
         })
       }
     })
-    app.checkSession(function(){
+    app.checkSession(function () {
       that.checkIsSign();
+
+      if (app.globalData.shareTicket)
+        console.log(app.globalData.shareTicket)
       // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
       app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
         //群排行数据回掉
@@ -76,6 +82,7 @@ Page({
           'tabSetting.dynamicgroup.data': result.data.body.data,
           'tabSetting.dynamicgroup.load': false
         })
+        wx.hideToast();
       });
     });
   },
@@ -155,7 +162,7 @@ Page({
       //关闭 
       if (currentStatu == "ok") {
         this.userSign();
-      
+
       }
     }.bind(this), 200)
     // 显示 
@@ -168,7 +175,7 @@ Page({
     }
   },
   //签到判断
-  checkIsSign(){
+  checkIsSign() {
     var that = this;
     util.ajax("checkIsSign", {
       session_3rd: wx.getStorageSync("session_3rd")
@@ -182,7 +189,7 @@ Page({
             'tabSetting.btn.btnText': '签到'
           }
         );
-      }else{
+      } else {
         that.setData(
           {
             'tabSetting.btn.disabled': true,
@@ -193,26 +200,30 @@ Page({
     })
   },
   //签到
-  userSign(){
+  userSign() {
     var that = this;
     wx.showLoading({
-      title: '加载中',
+      title: '签到中',
     })
-    util.ajax('SignCommit',{
+    that.setData({
+      showModalStatus: false,
+    })
+    util.ajax('SignCommit', {
       intradayfriendNumber: that.data.friendNum,
       session_3rd: wx.getStorageSync("session_3rd")
-    },'POST',function(res){
+    }, 'POST', function (res) {
       console.info("签到")
       console.log(res);
-      that.loadCurriculumRankingList(function(result){
-        wx.hideLoading()
+      that.loadCurriculumRankingList(function (result) {
         that.setData(
           {
-            showModalStatus: false,
             'tabSetting.btn.disabled': true,
-            'tabSetting.btn.btnText': '已签到'
+            'tabSetting.btn.btnText': '已签到',
+            'tabSetting.rank.data': result.data.body,
+            'tabSetting.rank.load': false
           }
         );
+        wx.hideLoading()
         wx.showToast({
           // title: '今日好友数' + that.data.friendNum,
           title: '签到成功',
@@ -220,7 +231,16 @@ Page({
           duration: 2000
         })
       })
-      
+    }, function () {
+      //complete
+    }, function () {
+      //fail
+      // wx.showToast({
+      //   // title: '今日好友数' + that.data.friendNum,
+      //   title: '签到失败',
+      //   icon: 'success',
+      //   duration: 2000
+      // })
     })
   },
   bindKeyInput(e) {
@@ -231,15 +251,15 @@ Page({
   //群动态上拉加载
   lower(e) {
     var that = this;
-    if (that.data.tabSetting.dynamicgroup.loadNextPage){
-      return ;
+    if (that.data.tabSetting.dynamicgroup.loadNextPage) {
+      return;
     }
     this.setData(
       {
         'tabSetting.dynamicgroup.loadNextPage': true
       }
     );
-    this.loadDynamicgroupDate(function(result){
+    this.loadDynamicgroupDate(function (result) {
       that.data.tabSetting.dynamicgroup.data.push.apply(that.data.tabSetting.dynamicgroup.data, result.data.body.data)
       //群动态数据回调
       that.setData({
@@ -250,7 +270,7 @@ Page({
     });
   },
   // 刷新群动态
-  loadCurriculumRankingList(fn){
+  loadCurriculumRankingList(fn) {
     var that = this;
     wx.getShareInfo({
       shareTicket: app.globalData.shareTicket,
@@ -274,7 +294,7 @@ Page({
     })
   },
   //加载群动态
-  loadDynamicgroupDate(fn){
+  loadDynamicgroupDate(fn) {
     var that = this;
     wx.getShareInfo({
       shareTicket: app.globalData.shareTicket,
@@ -283,24 +303,24 @@ Page({
       },
       complete(res) {
         console.log(that.data.tabSetting.dynamicgroup.PageNum)
-          that.setData({
-            'tabSetting.dynamicgroup.PageNum': that.data.tabSetting.dynamicgroup.PageNum + 1
-          })
-          //请求服务器 解密数据
-          util.ajax('loadGroupDynamics', {
-            openGIdEncryptedData: encodeURIComponent(res.encryptedData),
-            openGIdIv: res.iv,
-            session_3rd: wx.getStorageSync("session_3rd") ,
-            start: that.data.tabSetting.dynamicgroup.PageNum,
-            limit: 10
-          }, 'POST', function (res) {
-            // success
-            console.info(res);
-            
-            if (typeof fn === "function") fn(res);
-          }, function () {
-            // complete
-          })
+        that.setData({
+          'tabSetting.dynamicgroup.PageNum': that.data.tabSetting.dynamicgroup.PageNum + 1
+        })
+        //请求服务器 解密数据
+        util.ajax('loadGroupDynamics', {
+          openGIdEncryptedData: encodeURIComponent(res.encryptedData),
+          openGIdIv: res.iv,
+          session_3rd: wx.getStorageSync("session_3rd"),
+          start: that.data.tabSetting.dynamicgroup.PageNum,
+          limit: 10
+        }, 'POST', function (res) {
+          // success
+          console.info(res);
+
+          if (typeof fn === "function") fn(res);
+        }, function () {
+          // complete
+        })
       }
     })
   }

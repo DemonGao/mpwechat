@@ -1,4 +1,4 @@
-<import src="../common/loadding/loadding.wxml" />
+<!--<import src="../common/loadding/loadding.wxml" />-->
 <view class="container">
   <image src="{{jumbotronSrc}}" class="demon_jumbotron"></image>
   <view class="demon_tabBox" style="height:{{tabBox.height}}">
@@ -11,7 +11,7 @@
     <view class="demon_tab_content" wx:if="{{tabSetting.selectIndex==0}}">
       <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};">
         <template is="loadding"  wx:if="{{tabSetting.rank.load}}"/>
-        <view wx:if="{{!tabSetting.rank.load}}" class="demon_tab_content_item" wx:for="{{tabSetting.rank.data}}" wx:key="item">
+        <view wx:if="{{!tabSetting.rank.load && !tabSetting.dynamicgroup.load}}" class="demon_tab_content_item" wx:for="{{tabSetting.rank.data}}" wx:key="item">
           <text class="rank">{{index + 1}}</text>
           <image src="{{item.imgUrl}}" class="userImg"></image>
           <view class="others">
