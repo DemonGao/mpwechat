@@ -21,9 +21,8 @@ Page({
         plain: false,
         loading: false
       },
-      rankdata: [],     //群排行数据
       groupdata: [],
-      rank:{
+      rank:{  //群排行
         data: [],
         load: true
       },
@@ -36,8 +35,7 @@ Page({
       }
     },
     showModalStatus: false,
-    friendNum: undefined,
-    rank_load: true,
+    friendNum: undefined
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -46,26 +44,43 @@ Page({
       'tabSetting.selectIndex': index
     })
   },
+  // onLoad: function () {
+  //   var that = this;
+  //   //要求小程序返回分享目标信息
+  //   wx.showShareMenu({
+  //     withShareTicket: true
+  //   })
+  //   //获取屏幕高度
+  //   var screenHeight = wx.getSystemInfo({
+  //     success: function (res) {
+  //       screenHeight = res.windowHeight;
+  //       var rankHeight = screenHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46;
+  //       that.setData({
+  //         'tabSetting.rankHeight': rankHeight + 'px'
+  //       })
+  //     }
+  //   })
+  //   app.checkSession(function(){
+  //     that.checkIsSign();
+  //     // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
+  //     app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
+  //       //群排行数据回掉
+  //       that.setData({
+  //         'tabSetting.rank.data': result.data.body,
+  //         'tabSetting.rank.load': false
+  //       })
+
+  //     }, function (result) {
+  //       //群动态数据回调
+  //       that.setData({
+  //         'tabSetting.dynamicgroup.data': result.data.body.data,
+  //         'tabSetting.dynamicgroup.load': false
+  //       })
+  //     });
+  //   });
+  // },
   onLoad: function () {
-    var that = this
-    that.checkIsSign();
-    // that.loadCurriculumRankingList();
-    // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
-    app.jumpSharePageFn(app.globalData.shareTicket,function(result){
-      //群排行数据回掉
-      that.setData({
-        'tabSetting.rank.data': result.data.body,
-        'tabSetting.rank.load': false
-      })
-      
-    },function(result){
-      //群动态数据回调
-      that.setData({
-        'tabSetting.dynamicgroup.data': result.data.body.data,
-        'tabSetting.dynamicgroup.load': false
-      })
-    });
-    
+    var that = this;
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
@@ -80,6 +95,25 @@ Page({
         })
       }
     })
+    that.checkIsSign();
+    // that.loadCurriculumRankingList();
+    // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
+    app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
+      //群排行数据回掉
+      that.setData({
+        'tabSetting.rank.data': result.data.body,
+        'tabSetting.rank.load': false
+      })
+
+    }, function (result) {
+      //群动态数据回调
+      that.setData({
+        'tabSetting.dynamicgroup.data': result.data.body.data,
+        'tabSetting.dynamicgroup.load': false
+      })
+    });
+
+    
   },
   //转发函数
   onShareAppMessage(res) {

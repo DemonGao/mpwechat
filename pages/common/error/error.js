@@ -24,6 +24,7 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
+    wx.hideShareMenu()
     console.log(options.type)
     that.setData({
       type: options.type,

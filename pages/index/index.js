@@ -44,20 +44,6 @@ Page({
     wx.setNavigationBarTitle({
       title: '加载中...'
     })
-    wx.showNavigationBarLoading()
-    app.checkSession(function(){
-      util.ajax('fpUserData',{
-        session_3rd: wx.getStorageSync("session_3rd")
-      },'POST',function(res){
-        console.log(res.data);
-        if(res.data.code ==='SUCCESS') {
-          that.setData({
-            result: res.data.body,
-            load: false,
-          })
-        }
-      })
-    });
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
@@ -75,6 +61,20 @@ Page({
         })
       }
     })
+    wx.showNavigationBarLoading()
+    app.checkSession(function(){
+      util.ajax('fpUserData',{
+        session_3rd: wx.getStorageSync("session_3rd")
+      },'POST',function(res){
+        console.log(res.data);
+        if(res.data.code ==='SUCCESS') {
+          that.setData({
+            result: res.data.body,
+            load: false,
+          })
+        }
+      })
+    });
   },
   //转发函数
   onShareAppMessage(res) {
@@ -86,7 +86,7 @@ Page({
       //转发标题
       title: '排行榜',
       //desc
-      desc: '看看你当前的排行吧!',
+      desc: '看看你当前的排行吧!!',
       //转发路径
       path: '/pages/share/share',
       success: function (res) {

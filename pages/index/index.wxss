@@ -6,9 +6,12 @@
   height:100%;
   width:100%;
 }
+
+page{
+  background-color: #1a523f;
+}
 .container{
   background-color: #1a523f;
-  height: 100%;
 }
 .demon_tab {
   background-color: #fefefe;

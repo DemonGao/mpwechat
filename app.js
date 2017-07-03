@@ -7,8 +7,7 @@ App({
     API_URL: "https://xcx.d1money.com/", //请求服务器地址
     session_3rd: wx.getStorageSync('session_3rd'),  //获取本地存储的session_3rd
     userInfo: null,
-    shareTicket: "",
-
+    shareTicket: ""
   },
   /**
    * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
@@ -29,12 +28,13 @@ App({
           session_3rd: wx.getStorageSync("session_3rd")
         },'POST',function(res){
           console.log(res);
+          // 如果session_3rd未过期
           if(res.data.code == "SUCCESS"){
             //检查是否有工作室 若无工作室则跳转到error页面
             that.checkIsFinancialPlanner();
             if (typeof fn == "function") fn()
-          }else{
-            that.login();
+          } else {//session_3rd 过期或者未授权
+            that.login(fn);
           } 
         })
       },
@@ -90,11 +90,11 @@ App({
   UserLogin(code, encryptedData, iv, fn) {
     var that = this;
     //创建一个dialog
-    wx.showToast({
-      title: '正在登录...',
-      icon: 'loading',
-      duration: 8000
-    });
+    // wx.showToast({
+    //   title: '正在登录...',
+    //   icon: 'loading',
+    //   duration: 8000
+    // });
     util.ajax('login', {
       code: code,
       session_3rd: wx.getStorageSync("session_3rd"),
@@ -108,6 +108,8 @@ App({
         //存储session_3rd
         console.log("session_3rd: "+result.body.session_3rd)
         wx.setStorageSync("session_3rd", result.body.session_3rd)
+        //检查是否有工作室 若无工作室则跳转到error页面
+        that.checkIsFinancialPlanner();
         if (typeof fn === 'function') fn();
       }
     }, function () {
@@ -132,7 +134,11 @@ App({
    * 当小程序启动，或从后台进入前台显示，会触发 onShow
    */
   onShow(options) {
-    var that = this
+    var that = this;
+    //要求小程序返回分享目标信息
+    wx.showShareMenu({
+      withShareTicket: true
+    })
     //用户进入场景值判断 options.scene
     switch (options.scene) {
       // 1044: 带shareTicket的小程序消息卡片
@@ -140,10 +146,10 @@ App({
         console.log("1044: 带shareTicket的小程序消息卡片");
         that.globalData.shareTicket = options.shareTicket;
         break;
-      default :
-        //登陆态验证   检测当前用户登录态是否有效
-        that.checkSession();
-        break;
+      // default :
+      //   //登陆态验证   检测当前用户登录态是否有效
+      //   that.checkSession();
+      //   break;
     }
   },
   //通过 1044: 带shareTicket的小程序消息卡片 过来的事件
