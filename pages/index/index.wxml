@@ -1,8 +1,8 @@
-<import src="../common/loadding/loadding.wxml" />
+<!--<import src="../common/loadding/loadding.wxml" />
 <view class="index_load" wx:if="{{load}}">
   <template is="loadding"  />
-</view>
-<view class="container" wx:else="{{load}}">
+</view>-->
+<view class="container">
   <image src="{{jumbotronSrc}}" class="demon_jumbotron"></image>
   <view class="demon_tabBox" style="height:{{tabBox.height}}">
     <view class="demon_tab">
@@ -12,7 +12,7 @@
     </view>
     <!--群排行-->
     <view class="demon_tab_content" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==0}}">
-      <view class="demon_userInfo rankbox">
+      <view class="demon_userInfo rankbox" wx:if="{{!load}}">
         <view class="demon_userImg">
           <image src="{{result.imgUrl}}" class="demon_img"></image>
         </view>

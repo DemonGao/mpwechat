@@ -24,25 +24,25 @@ App({
         // session 未过期，并且在本生命周期一直有效
         console.log("session未过期");
         console.log(wx.getStorageSync("session_3rd"))
-        util.ajax('checkSession',{
+        util.ajax('checkSession', {
           session_3rd: wx.getStorageSync("session_3rd")
-        },'POST',function(res){
+        }, 'POST', function (res) {
           console.log(res);
           // 如果session_3rd未过期
-          if(res.data.code == "SUCCESS"){
+          if (res.data.code == "SUCCESS") {
             //检查是否有工作室 若无工作室则跳转到error页面
             that.checkIsFinancialPlanner(fn);
           } else {//session_3rd 过期或者未授权
             that.login(fn);
-          } 
+          }
         })
       },
       fail: function () {
         //登录态过期 重新登录(获取登陆凭证)
         // console.log("session过期");
         that.login();
-      }, 
-      complete: function(){
+      },
+      complete: function () {
         //接口调用结束的回调函数（调用成功、失败都会执行）
       }
     })
@@ -100,7 +100,7 @@ App({
       //登陆验证成功 返回 session_3rd 并本地存储
       if (result.code === "SUCCESS") {
         //存储session_3rd
-        console.log("session_3rd: "+result.body.session_3rd)
+        console.log("session_3rd: " + result.body.session_3rd)
         wx.setStorageSync("session_3rd", result.body.session_3rd)
         //检查是否有工作室 若无工作室则跳转到error页面
         that.checkIsFinancialPlanner(fn);
@@ -117,7 +117,7 @@ App({
       //如果是理财师
       if (res.data.code === "SUCCESS") {
         if (typeof fn === 'function') fn();
-      }else{
+      } else {
         //如果不是理财师 跳转
         wx.reLaunch({
           url: '../common/error/error?type=notHaveWorkspace'
@@ -163,9 +163,10 @@ App({
         // console.log("分享：");
         // console.log(res)
         // console.log('shareTicket: \n' + that.globalData.shareTicket);
-        that.checkSession(function(){
+        that.checkSession(function () {
           wx.showLoading({
             title: '加载中',
+            mask: true
           })
           //请求服务器 解密数据
           util.ajax('loadCurriculumRankingList', {
@@ -174,29 +175,30 @@ App({
             session_3rd: wx.getStorageSync("session_3rd")
           }, 'POST', function (res) {
             // success
-            if(res.data.code === "SUCCESS"){
+            if (res.data.code === "SUCCESS") {
               if (typeof rankcb === "function") rankcb(res)
             }
-            
+
           }, function () {
             // complete
-          })
-          //请求服务器 解密数据
-          util.ajax('loadGroupDynamics', {
-            openGIdEncryptedData: encodeURIComponent(res.encryptedData),
-            openGIdIv: res.iv,
-            session_3rd: wx.getStorageSync("session_3rd"),
-            start:0,
-            limit:10
-          }, 'POST', function (res) {
-            // success
-            console.info(res);
-            if (typeof groupcb === "function") groupcb(res);
-          }, function () {
-            // complete
-          })
-          
-        });
+            // 获取群动态
+            util.ajax('loadGroupDynamics', {
+              openGIdEncryptedData: encodeURIComponent(res.encryptedData),
+              openGIdIv: res.iv,
+              session_3rd: wx.getStorageSync("session_3rd"),
+              start: 0,
+              limit: 10
+            }, 'POST', function (res) {
+              // success
+              console.info(res);
+              if (typeof groupcb === "function") groupcb(res);
+            }, function () {
+              // complete
+            })
+
+          });
+        })
+
       }
     })
   },

@@ -10,9 +10,6 @@
 page{
   background-color: #1a523f;
 }
-.container{
-  background-color: #1a523f;
-}
 .demon_tab {
   background-color: #fefefe;
   width: 690rpx;

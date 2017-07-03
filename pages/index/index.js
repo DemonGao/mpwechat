@@ -41,6 +41,10 @@ Page({
   },
   onLoad: function () {
     var that = this;
+    wx.showLoading({
+      title: '加载中',
+      mask: true
+    })
     wx.setNavigationBarTitle({
       title: '加载中...'
     })
@@ -71,6 +75,12 @@ Page({
           that.setData({
             result: res.data.body,
             load: false,
+          })
+          wx.hideToast();
+        }else{
+          wx.hideToast();
+          wx.showToast({
+            title:'请稍后再试!'
           })
         }
       })
