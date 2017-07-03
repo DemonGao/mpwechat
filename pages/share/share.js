@@ -22,7 +22,11 @@ Page({
         loading: false
       },
       rankdata: [],     //群排行数据
-      groupdata: [],     
+      groupdata: [],
+      rank:{
+        data: [],
+        load: true
+      },
       dynamicgroup: {//群动态
         data:[],
         load: true,           //初始化加载loadding
@@ -31,13 +35,9 @@ Page({
         Total:0               //总页数
       }
     },
-    userInfo: {},
     showModalStatus: false,
     friendNum: undefined,
     rank_load: true,
-    dynamicgroup_load: true,
-    dynamicgroup_nextPage: false,
-    dynamicgroup_PageNum:0
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -53,11 +53,9 @@ Page({
     // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
     app.jumpSharePageFn(app.globalData.shareTicket,function(result){
       //群排行数据回掉
-
-      
       that.setData({
-        'tabSetting.rankdata': result.data.body,
-        'rank_load': false
+        'tabSetting.rank.data': result.data.body,
+        'tabSetting.rank.load': false
       })
       
     },function(result){

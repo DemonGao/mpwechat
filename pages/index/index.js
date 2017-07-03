@@ -22,10 +22,15 @@ Page({
       },
       
     },
-    userInfo: {},
+    userInfo: {
+      customerCount:0,
+      weekCount: 0,
+      AllCount: 0
+    },
     showModalStatus: false,
     friendNum: undefined,
-    result: {}//个人排行榜
+    result: {},  //个人排行榜
+    load:true
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -36,14 +41,21 @@ Page({
   },
   onLoad: function () {
     var that = this;
+    wx.setNavigationBarTitle({
+      title: '加载中...'
+    })
+    wx.showNavigationBarLoading()
     app.checkSession(function(){
       util.ajax('fpUserData',{
         session_3rd: wx.getStorageSync("session_3rd")
       },'POST',function(res){
         console.log(res.data);
-        that.setData({
-          result: res.data.body
-        })
+        if(res.data.code ==='SUCCESS') {
+          that.setData({
+            result: res.data.body,
+            load: false,
+          })
+        }
       })
     });
     //要求小程序返回分享目标信息

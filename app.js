@@ -15,7 +15,6 @@ App({
    */
   onLaunch(options) {
     var that = this;
-    // that.login();
   },
   //登陆态验证   检测当前用户登录态是否有效
   checkSession(fn) {
@@ -23,9 +22,9 @@ App({
     //验证
     wx.checkSession({
       success: function () {
-        //session 未过期，并且在本生命周期一直有效
-        // console.log("session未过期");
-        // console.log(wx.getStorageSync("session_3rd"))
+        // session 未过期，并且在本生命周期一直有效
+        console.log("session未过期");
+        console.log(wx.getStorageSync("session_3rd"))
         util.ajax('checkSession',{
           session_3rd: wx.getStorageSync("session_3rd")
         },'POST',function(res){
@@ -43,6 +42,9 @@ App({
         //登录态过期 重新登录(获取登陆凭证)
         // console.log("session过期");
         that.login();
+      }, 
+      complete: function(){
+        //接口调用结束的回调函数（调用成功、失败都会执行）
       }
     })
   },
@@ -131,7 +133,6 @@ App({
    */
   onShow(options) {
     var that = this
-    // that.login();
     //用户进入场景值判断 options.scene
     switch (options.scene) {
       // 1044: 带shareTicket的小程序消息卡片
@@ -139,10 +140,10 @@ App({
         console.log("1044: 带shareTicket的小程序消息卡片");
         that.globalData.shareTicket = options.shareTicket;
         break;
-      // default :
-      //   //登陆态验证   检测当前用户登录态是否有效
-      //   that.checkSession();
-      //   break;
+      default :
+        //登陆态验证   检测当前用户登录态是否有效
+        that.checkSession();
+        break;
     }
   },
   //通过 1044: 带shareTicket的小程序消息卡片 过来的事件

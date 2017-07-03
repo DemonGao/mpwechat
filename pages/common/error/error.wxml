@@ -9,18 +9,11 @@
             <view class="weui-msg__desc">{{data.content}}</view>
         </view>
         <view class="weui-msg__opr-area">
-            <view class="weui-btn-area">
+            <!--<view class="weui-btn-area">
                 <button class="weui-btn" type="primary" bindtap="" data-method="yes">推荐操作</button>
                 <button class="weui-btn" type="default" bindtap="" data-method="no">辅助操作</button>
-            </view>
+            </view>-->
         </view>
-        <view class="weui-msg__extra-area">
-            <view class="weui-footer">
-                <view class="weui-footer__links">
-                    <navigator url="" class="weui-footer__link">底部链接文本</navigator>
-                </view>
-                <view class="weui-footer__text">Copyright © 2008-2016 weui.io</view>
-            </view>
-        </view>
+        
     </view>
 </view>

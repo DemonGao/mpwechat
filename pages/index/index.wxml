@@ -1,4 +1,8 @@
-<view class="container">
+<import src="../common/loadding/loadding.wxml" />
+<view class="index_load" wx:if="{{load}}">
+  <template is="loadding"  />
+</view>
+<view class="container" wx:else="{{load}}">
   <image src="{{jumbotronSrc}}" class="demon_jumbotron"></image>
   <view class="demon_tabBox" style="height:{{tabBox.height}}">
     <view class="demon_tab">
@@ -9,24 +13,25 @@
     <!--群排行-->
     <view class="demon_tab_content" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==0}}">
       <view class="demon_userInfo rankbox">
-  <view class="demon_userImg">
-    <image src="{{result.imgUrl}}" class="demon_img"></image>
-  </view>
-  <view class="demon_userInfo_content">
-    <view class="demon_userInfo_content_item">
-      <text class="text">{{result.customerCount}}</text>
-      <text class="text">好友数</text>
-    </view>
-    <view class="demon_userInfo_content_item">
-      <text class="text">{{result.weekCount}}</text>
-      <text class="text">本周新客户</text>
-    </view>
-    <view class="demon_userInfo_content_item">
-      <text class="text">{{result.AllCount}}</text>
-      <text class="text">积累客户</text>
-    </view>
-  </view>
-</view>
+        <view class="demon_userImg">
+          <image src="{{result.imgUrl}}" class="demon_img"></image>
+        </view>
+        <view class="demon_userInfo_content">
+          <view class="demon_userInfo_content_item">
+            <text class="text" wx:if="{{result.customerCount}}">{{result.customerCount}}</text>
+            <text class="text" wx:else="{{result.customerCount}}">0</text>
+            <text class="text">好友数</text>
+          </view>
+          <view class="demon_userInfo_content_item">
+            <text class="text">{{result.weekCount}}</text>
+            <text class="text">本周新客户</text>
+          </view>
+          <view class="demon_userInfo_content_item">
+            <text class="text">{{result.AllCount}}</text>
+            <text class="text">积累客户</text>
+          </view>
+        </view>
+      </view>
     </view>
     <!--群动态-->
     <view class="demon_tab_content dynamicgroup" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==1}}">

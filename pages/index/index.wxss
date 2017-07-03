@@ -1,10 +1,15 @@
 /**index.wxss**/
 @import '/utils/css/demonStyle.wxss';
 
-page {
-  background-color: #1a523f;
+.index_load{
+  position:absolute;
+  height:100%;
+  width:100%;
 }
-
+.container{
+  background-color: #1a523f;
+  height: 100%;
+}
 .demon_tab {
   background-color: #fefefe;
   width: 690rpx;
