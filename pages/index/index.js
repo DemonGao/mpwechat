@@ -94,9 +94,9 @@ Page({
     }
     return {
       //转发标题
-      title: '排行榜',
+      title: '快来看看你当前的获客排行吧',
       //desc
-      desc: '看看你当前的排行吧!!',
+      desc: '快来看看你当前的获客排行吧!!',
       //转发路径
       path: '/pages/share/share',
       success: function (res) {

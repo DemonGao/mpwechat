@@ -21,7 +21,8 @@
               <text wx:else="{{item.signCount}}" class="demon_label demon_default }}">未签到</text>
             </view>
             <view class="number">
-              <text style="flex:1">{{item.customerCount}}</text>
+              <text style="flex:1" wx:if="{{item.customerCount}}">{{item.customerCount}}</text>
+              <text style="flex:1" wx:else="{{item.customerCount}}">0</text>
               <text>{{item.weekCount}}</text>
               <text>{{item.AllCount}}</text>
             </view>
