@@ -40,10 +40,13 @@ function ajax(url, data, type, success, complete, fail) {
       if (success) success(res)
       if (res.data.code != "SUCCESS") {
         console.error(`fail: 错误码:${res.data.code},错误信息:${res.data.msg}`)
-      } else if (res.data.code == "000002") {
-        //"SESSION_3RD 超时"
-        console.error("SESSION_3RD 超时");
-        app.login();
+        if (res.data.code == "000002") {
+          //"SESSION_3RD 超时"
+          console.error("SESSION_3RD 超时");
+          app.login();
+        } else if (res.data.code == "000005") {
+          console.error("1.解码失败 \n 2.非群分享入口进入,无法获取其openGID和openGiv")
+        }
       }
     },
     fail() {
