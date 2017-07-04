@@ -65,25 +65,30 @@ Page({
     })
     app.checkSession(function () {
       that.checkIsSign();
-
-      if (app.globalData.shareTicket)
-        console.log(app.globalData.shareTicket)
-      // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
-      app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
-        //群排行数据回掉
-        that.setData({
-          'tabSetting.rank.data': result.data.body,
-          'tabSetting.rank.load': false
+      console.log('scene:' + app.globalData.scene)
+      console.log('shareTicket:' + app.globalData.shareTicket)
+      if (app.globalData.shareTicket && app.globalData.scene === 1044) {
+        // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
+        app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
+          //群排行数据回掉
+          that.setData({
+            'tabSetting.rank.data': result.data.body,
+            'tabSetting.rank.load': false
+          })
+        }, function (result) {
+          //群动态数据回调
+          that.setData({
+            'tabSetting.dynamicgroup.data': result.data.body.data,
+            'tabSetting.dynamicgroup.load': false
+          })
+          wx.hideToast();
+        });
+      } else {
+        wx.reLaunch({
+          url: '../index/index'
         })
+      }
 
-      }, function (result) {
-        //群动态数据回调
-        that.setData({
-          'tabSetting.dynamicgroup.data': result.data.body.data,
-          'tabSetting.dynamicgroup.load': false
-        })
-        wx.hideToast();
-      });
     });
   },
   //转发函数
@@ -208,6 +213,14 @@ Page({
     that.setData({
       showModalStatus: false,
     })
+    if (!that.data.friendNum) {
+      wx.showToast({
+        title: '好友数不能为空',
+        image: './../../static/img/no64.png',
+        duration: 1000
+      })
+      return;
+    }
     util.ajax('SignCommit', {
       intradayfriendNumber: that.data.friendNum,
       session_3rd: wx.getStorageSync("session_3rd")

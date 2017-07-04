@@ -7,7 +7,8 @@ App({
     API_URL: "https://xcx.d1money.com/", //请求服务器地址
     session_3rd: wx.getStorageSync('session_3rd'),  //获取本地存储的session_3rd
     userInfo: null,
-    shareTicket: ""
+    shareTicket: "",
+    scene:0,
   },
   /**
    * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
@@ -22,17 +23,18 @@ App({
     wx.checkSession({
       success: function () {
         // session 未过期，并且在本生命周期一直有效
-        console.log("session未过期");
-        console.log(wx.getStorageSync("session_3rd"))
+        console.log("checkSession方法：wx.checkSession未过期 " + wx.getStorageSync("session_3rd"));
+        console.log('ajax:checkSession');
         util.ajax('checkSession', {
           session_3rd: wx.getStorageSync("session_3rd")
         }, 'POST', function (res) {
-          console.log(res);
           // 如果session_3rd未过期
           if (res.data.code == "SUCCESS") {
+            console.log("session_3rd未过期，调用app.checkIsFinancialPlanner函数");
             //检查是否有工作室 若无工作室则跳转到error页面
             that.checkIsFinancialPlanner(fn);
           } else {//session_3rd 过期或者未授权
+            console.log("session_3rd已过期，调用app.login函数");
             that.login(fn);
           }
         })
@@ -40,10 +42,11 @@ App({
       fail: function () {
         //登录态过期 重新登录(获取登陆凭证)
         // console.log("session过期");
-        that.login();
+        that.login(fn);
       },
       complete: function () {
         //接口调用结束的回调函数（调用成功、失败都会执行）
+        
       }
     })
   },
@@ -116,6 +119,7 @@ App({
     }, 'POST', function (res) {
       //如果是理财师
       if (res.data.code === "SUCCESS") {
+        console.log("是理财师");
         if (typeof fn === 'function') fn();
       } else {
         //如果不是理财师 跳转
@@ -133,6 +137,10 @@ App({
    */
   onShow(options) {
     var that = this;
+    that.globalData.scene = options.scene;
+    console.log("options.scene:"+options.scene)
+    console.log("that.globalData.scene:" + that.globalData.scene)
+    that.globalData.shareTicket = null;
     //要求小程序返回分享目标信息
     wx.showShareMenu({
       withShareTicket: true
@@ -144,10 +152,6 @@ App({
         console.log("1044: 带shareTicket的小程序消息卡片");
         that.globalData.shareTicket = options.shareTicket;
         break;
-      // default :
-      //   //登陆态验证   检测当前用户登录态是否有效
-      //   that.checkSession();
-      //   break;
     }
   },
   //通过 1044: 带shareTicket的小程序消息卡片 过来的事件
@@ -159,18 +163,18 @@ App({
       fail(res) {
         wx.hideLoading();
         console.log(res);
+        console.log("wx.getShareInfo获取失败");
         wx.reLaunch({
           url: '../index/index'
         })
       },
       complete(res) {
-        // console.log("分享：");
+        console.log("分享：");
         // console.log(res)
-        // console.log('shareTicket: \n' + that.globalData.shareTicket);
+        console.log('shareTicket: \n' + that.globalData.shareTicket);
         that.checkSession(function () {
           wx.showLoading({
             title: '加载中',
-            mask: true
           })
           //请求服务器 解密数据
           util.ajax('loadCurriculumRankingList', {
@@ -195,9 +199,15 @@ App({
             }, 'POST', function (res) {
               // success
               console.info(res);
+              if(res.data.code === "000005"){
+                wx.reLaunch({
+                  url: '../index/index'
+                })
+              }
               if (typeof groupcb === "function") groupcb(res);
             }, function () {
               // complete
+
             })
 
           });
