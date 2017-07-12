@@ -41,17 +41,6 @@ Page({
   },
   onLoad: function () {
     var that = this;
-    wx.showLoading({
-      title: '加载中',
-      mask: true
-    })
-    wx.setNavigationBarTitle({
-      title: '加载中...'
-    })
-    //要求小程序返回分享目标信息
-    wx.showShareMenu({
-      withShareTicket: true
-    })
     //获取屏幕高度
     var screenHeight = wx.getSystemInfo({
       success: function (res) {
@@ -65,6 +54,18 @@ Page({
         })
       }
     })
+    wx.showLoading({
+      title: '加载中',
+      mask: true
+    })
+    wx.setNavigationBarTitle({
+      title: '加载中...'
+    })
+    //要求小程序返回分享目标信息
+    wx.showShareMenu({
+      withShareTicket: true
+    })
+    
     wx.showNavigationBarLoading()
     app.checkSession(function(){
       util.ajax('fpUserData',{
@@ -94,9 +95,9 @@ Page({
     }
     return {
       //转发标题
-      title: '排行榜',
+      title: '快来看看你当前的获客排行吧',
       //desc
-      desc: '看看你当前的排行吧!!',
+      desc: '快来看看你当前的获客排行吧!!',
       //转发路径
       path: '/pages/share/share',
       success: function (res) {
