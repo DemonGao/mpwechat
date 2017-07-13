@@ -30,6 +30,7 @@ Page({
       type: options.type,
       data: that.data.msg[options.type]
     })
+    wx.hideToast();
   },
 
   /**

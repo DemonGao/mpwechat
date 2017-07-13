@@ -35,7 +35,10 @@ Page({
       }
     },
     showModalStatus: false,
-    friendNum: undefined
+    friendNum: undefined,
+    IsFinancialPlanner:false, //是否是理财师
+    userInfo:null,            //非理财师用户信息
+    currentuserId:null        //当前理财师的userId
   },
   //事件处理函数
   bindViewTap: function (e) {
@@ -54,34 +57,64 @@ Page({
       withShareTicket: true
     })
     //获取屏幕高度
-    var screenHeight = wx.getSystemInfo({
-      success: function (res) {
-        screenHeight = res.windowHeight;
-        var rankHeight = screenHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46;
-        that.setData({
-          'tabSetting.rankHeight': rankHeight + 'px'
-        })
-      }
+    that.setData({
+      'tabSetting.rankHeight': wx.getSystemInfoSync().windowHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46 + 'px'
     })
-    app.checkSession(function () {
+    // app.checkSession(function () {
       that.checkIsSign();
-      console.log('scene:' + app.globalData.scene)
-      console.log('shareTicket:' + app.globalData.shareTicket)
+      // console.log('scene:' + app.globalData.scene)
+      // console.log('shareTicket:' + app.globalData.shareTicket)
       if (app.globalData.shareTicket && app.globalData.scene === 1044) {
         // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
         app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
           //群排行数据回掉
-          that.setData({
-            'tabSetting.rank.data': result.data.body,
-            'tabSetting.rank.load': false
-          })
+          console.log("群排行");
+          console.log(result);
+          if (result.data.code === "SUCCESS") {
+            that.setData({
+              'IsFinancialPlanner': result.data.body.IsFinancialPlanner,
+              'currentuserId': result.data.body.currentuserId,
+              'tabSetting.rank.data': result.data.body.data,
+              'tabSetting.rank.load': false,
+              'tabSetting.btn.btnText': '签到'
+            })
+            if (!result.data.body.IsFinancialPlanner) {
+              app.getUserInfo(function (userInfo) {
+                //更新数据
+                that.setData({
+                  userInfo: userInfo,
+                  'tabSetting.btn.disabled': true,
+                  load: false,
+                })
+              })
+            }
+          }else{
+            if (result.data.code === "000005") {
+              console.log("分享页：获取群排行失败");
+              console.log(wx.getStorageSync("session_3rd"));
+              app.login(that.onLoad); //获取session失败后，重新login 然后加载当前页面
+            }else{
+              console.log("分享页：获取群排行失败 :" + result.data.code);
+            }
+          }
         }, function (result) {
           //群动态数据回调
-          that.setData({
-            'tabSetting.dynamicgroup.data': result.data.body.data,
-            'tabSetting.dynamicgroup.load': false
-          })
-          wx.hideToast();
+          console.info(result);
+          if (result.data.code === "SUCCESS") {
+            wx.hideToast();
+            that.setData({
+              'tabSetting.dynamicgroup.data': result.data.body.data,
+              'tabSetting.dynamicgroup.load': false
+            })
+          }else{
+            if (result.data.code === "000005") {
+              console.log("分享页：获取群动态失败");
+              console.log(wx.getStorageSync("session_3rd"));
+              app.login(that.onLoad); //获取session失败后，重新login 然后加载当前页面
+            }else{
+              console.log("分享页：获取群动态失败 :" + result.data.code);
+            }
+          }
         });
       } else {
         wx.reLaunch({
@@ -89,7 +122,7 @@ Page({
         })
       }
 
-    });
+    // });
   },
   //转发函数
   onShareAppMessage(res) {
@@ -107,8 +140,8 @@ Page({
       success: function (res) {
         // 转发成功
         console.log("转发成功!")
-        console.log(JSON.stringify(res));
-        console.log(res.shareTickets[0]);
+        // console.log(JSON.stringify(res));
+        // console.log(res.shareTickets[0]);
       },
       fail: function (res) {
         // 转发失败
@@ -228,14 +261,14 @@ Page({
       console.info("签到")
       console.log(res);
       that.loadCurriculumRankingList(function (result) {
-        that.setData(
-          {
-            'tabSetting.btn.disabled': true,
-            'tabSetting.btn.btnText': '已签到',
-            'tabSetting.rank.data': result.data.body,
-            'tabSetting.rank.load': false
-          }
-        );
+        that.setData({
+          'IsFinancialPlanner': result.data.body.IsFinancialPlanner,
+          'currentuserId': result.data.body.currentuserId,
+          'tabSetting.rank.data': result.data.body.data,
+          'tabSetting.rank.load': false,
+          'tabSetting.btn.disabled': true,
+          'tabSetting.btn.btnText': '签到'
+        })
         wx.hideLoading()
         wx.showToast({
           // title: '今日好友数' + that.data.friendNum,
@@ -273,6 +306,7 @@ Page({
       }
     );
     this.loadDynamicgroupDate(function (result) {
+      // console.log(result);
       that.data.tabSetting.dynamicgroup.data.push.apply(that.data.tabSetting.dynamicgroup.data, result.data.body.data)
       //群动态数据回调
       that.setData({
@@ -328,7 +362,7 @@ Page({
           limit: 10
         }, 'POST', function (res) {
           // success
-          console.info(res);
+          // console.info(res);
 
           if (typeof fn === "function") fn(res);
         }, function () {

@@ -14,9 +14,13 @@
     <view class="demon_tab_content" style="height:{{tabSetting.rankHeight}};" wx:if="{{tabSetting.selectIndex==0}}">
       <view class="demon_userInfo rankbox" wx:if="{{!load}}">
         <view class="demon_userImg">
-          <image src="{{result.imgUrl}}" class="demon_img"></image>
+          <image wx:if="{{userInfo}}" src="{{userInfo.avatarUrl}}" class="demon_img"></image>
+          <image wx:else="{{userInfo}}" src="{{result.imgUrl}}" class="demon_img"></image>
         </view>
-        <view class="demon_userInfo_content">
+        <view wx:if="{{userInfo}}" class="demon_userInfo_content">
+          <text class="text" style="color:#fff;font: 32rpx 'PingFang'; text-align:center">暂无数据！开通工作室后才能查看您的获客数据</text>
+        </view>
+        <view wx:else="{{userInfo}}" class="demon_userInfo_content">
           <view class="demon_userInfo_content_item">
             <text class="text" wx:if="{{result.customerCount}}">{{result.customerCount}}</text>
             <text class="text" wx:else="{{result.customerCount}}">0</text>
@@ -31,6 +35,7 @@
             <text class="text">积累客户</text>
           </view>
         </view>
+        
       </view>
     </view>
     <!--群动态-->

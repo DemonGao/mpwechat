@@ -19,14 +19,9 @@ Page({
         disabled: false,
         plain: false,
         loading: false
-      },
-      
+      }
     },
-    userInfo: {
-      customerCount:0,
-      weekCount: 0,
-      AllCount: 0
-    },
+    userInfo: null,
     showModalStatus: false,
     friendNum: undefined,
     result: {},  //个人排行榜
@@ -39,10 +34,21 @@ Page({
       'tabSetting.selectIndex': index
     })
   },
+  onShow:function(){
+    var that = this;
+    //获取屏幕高度
+    let systemInfo = wx.getSystemInfoSync();
+    let rankHeight = systemInfo.windowHeight - (systemInfo.screenWidth / 750) * (298 + 88 + 15) - 46;
+    that.setData({
+      'tabSetting.rankHeight': rankHeight + 'px'
+    })
+    console.log("rankHeight:" + rankHeight);
+  }
+  ,
   onLoad: function () {
     var that = this;
     //获取屏幕高度
-    var screenHeight = wx.getSystemInfo({
+    wx.getSystemInfo({
       success: function (res) {
         screenHeight = res.windowHeight;
         console.log(screenHeight)
@@ -67,24 +73,40 @@ Page({
     })
     
     wx.showNavigationBarLoading()
-    app.checkSession(function(){
-      util.ajax('fpUserData',{
-        session_3rd: wx.getStorageSync("session_3rd")
-      },'POST',function(res){
-        console.log(res.data);
-        if(res.data.code ==='SUCCESS') {
+    app.checkSession(function(res){
+      //如果是理财师
+      if (res.data.code === "SUCCESS") {
+        console.log("是理财师");
+        util.ajax('fpUserData', {
+          session_3rd: wx.getStorageSync("session_3rd")
+        }, 'POST', function (res) {
+          console.log("11:" + res.data);
+          if (res.data.code === 'SUCCESS') {
+            that.setData({
+              result: res.data.body,
+              load: false,
+            })
+            wx.hideToast();
+          } else {
+            console.log("111");
+            wx.hideToast();
+            wx.showToast({
+              title: '请稍后再试!'
+            })
+          }
+        })
+      } else {
+        console.log("没有工作室");
+        app.getUserInfo(function (userInfo) {
+          console.log(userInfo)
+          //更新数据
           that.setData({
-            result: res.data.body,
+            userInfo: userInfo,
             load: false,
           })
-          wx.hideToast();
-        }else{
-          wx.hideToast();
-          wx.showToast({
-            title:'请稍后再试!'
-          })
-        }
-      })
+        })
+        wx.hideToast(); 
+      } 
     });
   },
   //转发函数
