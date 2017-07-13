@@ -31,9 +31,11 @@ App({
           // 如果session_3rd未过期
           if (res.data.code == "SUCCESS") {
             console.log("session_3rd未过期，调用app.checkIsFinancialPlanner函数");
+            
             //检查是否有工作室 若无工作室则跳转到error页面
             that.checkIsFinancialPlanner(fn);
-          } else {//session_3rd 过期或者未授权
+          } else {
+            //session_3rd 过期或者未授权
             console.log("session_3rd已过期，调用app.login函数");
             that.login(fn);
           }
@@ -109,7 +111,7 @@ App({
         that.checkIsFinancialPlanner(fn);
       }
     }, function () {
-      wx.hideToast();
+      // wx.hideToast();
     })
   },
   //检查是否有工作室(理财师)
@@ -117,18 +119,11 @@ App({
     util.ajax('checkIsFinancialPlanner', {
       session_3rd: wx.getStorageSync("session_3rd")
     }, 'POST', function (res) {
-      //如果是理财师
-      if (res.data.code === "SUCCESS") {
-        console.log("是理财师");
-        if (typeof fn === 'function') fn();
-      } else {
-        //如果不是理财师 跳转
-        wx.reLaunch({
-          url: '../common/error/error?type=notHaveWorkspace'
-        })
-      }
+      if (typeof fn === 'function') fn(res);
+     
     }, function () {
       //complete
+      // wx.hideToast();
       console.log("checkIsFinancialPlanner");
     })
   },
@@ -138,8 +133,8 @@ App({
   onShow(options) {
     var that = this;
     that.globalData.scene = options.scene;
-    console.log("options.scene:"+options.scene)
-    console.log("that.globalData.scene:" + that.globalData.scene)
+    console.log("入口号："+options.scene)
+    // console.log("that.globalData.scene:" + that.globalData.scene)
     that.globalData.shareTicket = null;
     //要求小程序返回分享目标信息
     wx.showShareMenu({
@@ -149,7 +144,7 @@ App({
     switch (options.scene) {
       // 1044: 带shareTicket的小程序消息卡片
       case 1044:
-        console.log("1044: 带shareTicket的小程序消息卡片");
+        console.log("1044: 带shareTicket的小程序消息卡片:" + options.shareTicket);
         that.globalData.shareTicket = options.shareTicket;
         break;
     }
@@ -162,20 +157,24 @@ App({
       shareTicket,
       fail(res) {
         wx.hideLoading();
-        console.log(res);
+        // console.log(res);
         console.log("wx.getShareInfo获取失败");
         wx.reLaunch({
           url: '../index/index'
         })
       },
-      complete(res) {
-        console.log("分享：");
+      success(res) {
+        // console.log("分享：");
         // console.log(res)
-        console.log('shareTicket: \n' + that.globalData.shareTicket);
-        that.checkSession(function () {
+        // console.log('shareTicket: \n' + that.globalData.shareTicket);
+        that.checkSession(function (result) {
           wx.showLoading({
             title: '加载中',
           })
+          // console.log("------- 分享信息 encryptedData iv session_3rd-----------");
+          // console.log(encodeURIComponent(res.encryptedData));
+          // console.log(res.iv);
+          // console.log(wx.getStorageSync("session_3rd"));
           //请求服务器 解密数据
           util.ajax('loadCurriculumRankingList', {
             openGIdEncryptedData: encodeURIComponent(res.encryptedData),
@@ -183,10 +182,7 @@ App({
             session_3rd: wx.getStorageSync("session_3rd")
           }, 'POST', function (res) {
             // success
-            if (res.data.code === "SUCCESS") {
               if (typeof rankcb === "function") rankcb(res)
-            }
-
           }, function () {
             // complete
             // 获取群动态
@@ -198,12 +194,7 @@ App({
               limit: 10
             }, 'POST', function (res) {
               // success
-              console.info(res);
-              if(res.data.code === "000005"){
-                wx.reLaunch({
-                  url: '../index/index'
-                })
-              }
+              
               if (typeof groupcb === "function") groupcb(res);
             }, function () {
               // complete
@@ -216,5 +207,22 @@ App({
       }
     })
   },
-
+  getUserInfo: function (cb) {
+    var that = this
+    if (this.globalData.userInfo) {
+      typeof cb == "function" && cb(this.globalData.userInfo)
+    } else {
+      //调用登录接口
+      wx.login({
+        success: function () {
+          wx.getUserInfo({
+            success: function (res) {
+              that.globalData.userInfo = res.userInfo
+              typeof cb == "function" && cb(that.globalData.userInfo)
+            }
+          })
+        }
+      })
+    }
+  }
 })

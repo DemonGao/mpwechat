@@ -14,10 +14,6 @@ page {
   /*box-shadow: 0 0 10rpx #ccc;*/
 }
 
-.demon_tab_content_item {
-  padding: 0 30rpx;
-}
-
 /*用户排行样式*/
 
 .demon_tab_content_item .rank {

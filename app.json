@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
     "pages/share/share",
     "pages/common/modal/modal",
     "pages/common/userInfo/userInfo",

@@ -10,8 +10,8 @@
     <!--群排行-->
     <view class="demon_tab_content" wx:if="{{tabSetting.selectIndex==0}}">
       <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};">
-        <template is="loadding"  wx:if="{{tabSetting.rank.load}}"/>
-        <view wx:if="{{!tabSetting.rank.load && !tabSetting.dynamicgroup.load}}" class="demon_tab_content_item" wx:for="{{tabSetting.rank.data}}" wx:key="item">
+        <!-- <template is="loadding" wx:if="{{tabSetting.rank.load}}" /> -->
+        <view wx:if="{{!tabSetting.rank.load && !tabSetting.dynamicgroup.load}}" class="demon_tab_content_item {{currentuserId == item.userId ? 'active' :''}}" wx:for="{{tabSetting.rank.data}}" wx:key="item">
           <text class="rank">{{index + 1}}</text>
           <image src="{{item.imgUrl}}" class="userImg"></image>
           <view class="others">
@@ -33,6 +33,26 @@
             </view>
           </view>
         </view>
+        <view wx:if="{{!tabSetting.rank.load && !tabSetting.dynamicgroup.load && !IsFinancialPlanner}}" class="demon_tab_content_item active">
+          <text class="rank">-</text>
+          <image src="{{userInfo.avatarUrl}}" class="userImg"></image>
+          <view class="others">
+             <view class="nickname">
+              <text class="nick" style="font: 32rpx 'PingFang';">{{userInfo.nickName}}</text>
+            </view>
+            <view class="number" style="margin-bottom:0;text-align:left">
+              <text>暂无排行！开通工作室后才能参与获客排行</text>
+            </view>
+          </view>
+        </view>
+        <!-- <view class="demon_tab_content_item">
+          <text class="rank">{{-}}</text>
+           <image src="{{userInfo.avatarUrl}}" class="userImg"></image>
+          <view class="others">
+            暂无数据
+          </view> 
+        </view> -->
+        
       </scroll-view>
     </view>
     <!--群动态-->
@@ -42,7 +62,7 @@
           <image class="nomsgimg" src="./../../static/img/nomsg.png"></image>
           <view class="nomsgtext">这里有点冷清 ～</view>
         </view>
-        <template is="loadding"  wx:if="{{tabSetting.dynamicgroup.load}}"/>
+        <template is="loadding" wx:if="{{tabSetting.dynamicgroup.load}}" />
         <view wx:if="{{!tabSetting.dynamicgroup.load}}" class="demon_tab_content_item" wx:for="{{tabSetting.dynamicgroup.data}}" wx:key="item">
           <image src="{{item.imgUrl}}" class="userImg"></image>
           <view class="others">
