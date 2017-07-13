@@ -266,6 +266,7 @@ Page({
           'currentuserId': result.data.body.currentuserId,
           'tabSetting.rank.data': result.data.body.data,
           'tabSetting.rank.load': false,
+          'tabSetting.btn.disabled': true,
           'tabSetting.btn.btnText': '签到'
         })
         wx.hideLoading()
