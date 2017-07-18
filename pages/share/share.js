@@ -95,7 +95,7 @@ Page({
               'currentuserId': result.data.body.currentuserId,
               'tabSetting.rank.data': result.data.body.data,
               'tabSetting.rank.load': false,
-              'tabSetting.btn.btnText': '签到'
+
             })
             if (!result.data.body.IsFinancialPlanner) {
               app.getUserInfo(function (userInfo) {
@@ -141,11 +141,12 @@ Page({
           }
         });
       } else {
+        wx.hideLoading();
+        // util.log(res);
         wx.reLaunch({
           url: '../index/index'
         })
       }
-
     // });
   },
   //转发函数
@@ -258,6 +259,7 @@ Page({
       session_3rd: wx.getStorageSync("session_3rd")
     }, "POST", function (res) {
       util.log(res);
+      console.log(res)
       if (res.data.code == "SUCCESS") {
         //SUCCESS 是没签到
         that.setData(
@@ -285,8 +287,6 @@ Page({
         'tabSetting.btn.loading': true,
         'tabSetting.btn.btnText': '签到中'
     });
-    
-    return ;
     util.ajax('SignCommit', {
       intradayfriendNumber: that.data.friendNum,
       session_3rd: wx.getStorageSync("session_3rd")
@@ -301,7 +301,7 @@ Page({
           'tabSetting.rank.load': false,
           'tabSetting.btn.disabled': true,
           'tabSetting.btn.loading': false,
-          'tabSetting.btn.btnText': '签到'
+          'tabSetting.btn.btnText': '已签到'
         })
         wx.hideLoading()
         wx.showToast({

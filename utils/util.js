@@ -68,10 +68,10 @@ function ajax(url, data, type, success, complete, fail) {
   })
 }
 function log(msg){
-  console.log(msg);
+  // console.log(msg);
 }
 function info(msg) {
-  console.info(msg);
+  // console.info(msg);
 }
 module.exports = {
   formatTime: formatTime,
