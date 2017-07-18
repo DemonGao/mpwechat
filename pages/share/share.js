@@ -4,7 +4,6 @@ var util = require('../../utils/util.js')
 var app = getApp()
 Page({
   data: {
-    motto: 'Hello World',
     // 页面巨幕图片路径
     jumbotronSrc: './../../static/img/banner.png',
     // 选项卡参数设置
@@ -17,7 +16,7 @@ Page({
         defaultSize: 'default',
         primarySize: 'default',
         warnSize: 'default',
-        disabled: false,
+        disabled: true,
         plain: false,
         loading: false
       },
@@ -47,30 +46,50 @@ Page({
       'tabSetting.selectIndex': index
     })
   },
-  onLoad: function () {
+  onLoad: function(){
+    var that = this;
+    wx.showShareMenu({
+      withShareTicket: true,
+    })
+    //获取屏幕高度
+    let systemInfo = wx.getSystemInfoSync();
+    let rankHeight = systemInfo.windowHeight - (systemInfo.screenWidth / 750) * (298 + 88 + 15) - 46;
+    that.setData({
+      'tabSetting.rankHeight': rankHeight + 'px',
+      
+    })
+  },
+  onShow: function () {
     var that = this;
     wx.showLoading({
       title: '加载中',
     })
-    //要求小程序返回分享目标信息
-    wx.showShareMenu({
-      withShareTicket: true
-    })
+    that.checkIsSign();
+    // //要求小程序返回分享目标信息
+    // wx.showShareMenu({
+    //   withShareTicket: true
+    // })
     //获取屏幕高度
-    that.setData({
-      'tabSetting.rankHeight': wx.getSystemInfoSync().windowHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46 + 'px'
-    })
+    // that.setData({
+    //   'tabSetting.rankHeight': wx.getSystemInfoSync().windowHeight - (wx.getSystemInfoSync().screenWidth / 750) * (298 + 88 + 15) - 46 + 'px'
+    // })
     // app.checkSession(function () {
-      that.checkIsSign();
-      // console.log('scene:' + app.globalData.scene)
-      // console.log('shareTicket:' + app.globalData.shareTicket)
+     
+      // util.log('scene:' + app.globalData.scene)
+      // util.log('shareTicket:' + app.globalData.shareTicket)
       if (app.globalData.shareTicket && app.globalData.scene === 1044) {
         // 通过 1044: 带shareTicket的小程序消息卡片 过来的事件
         app.jumpSharePageFn(app.globalData.shareTicket, function (result) {
           //群排行数据回掉
-          console.log("群排行");
-          console.log(result);
+          util.log("群排行");
+          util.log(result);
           if (result.data.code === "SUCCESS") {
+            // var setDataObj = {};
+            // setDataObj['IsFinancialPlanner']=result.data.body.IsFinancialPlanner;
+            // setDataObj['currentuserId']= result.data.body.currentuserId;
+            // setDataObj['tabSetting.rank.data']= result.data.body.data;
+            // setDataObj['tabSetting.rank.load']= false;
+            // setDataObj['tabSetting.btn.btnText']= '签到';
             that.setData({
               'IsFinancialPlanner': result.data.body.IsFinancialPlanner,
               'currentuserId': result.data.body.currentuserId,
@@ -81,6 +100,10 @@ Page({
             if (!result.data.body.IsFinancialPlanner) {
               app.getUserInfo(function (userInfo) {
                 //更新数据
+                console.log();
+                // setDataObj['userInfo'] = wx.getStorageSync("d1money_userInfo");
+                // setDataObj['tabSetting.btn.disabled'] = true;
+                // setDataObj['load'] = false;
                 that.setData({
                   userInfo: userInfo,
                   'tabSetting.btn.disabled': true,
@@ -88,18 +111,19 @@ Page({
                 })
               })
             }
+            // that.setData(setDataObj);
           }else{
             if (result.data.code === "000005") {
-              console.log("分享页：获取群排行失败");
-              console.log(wx.getStorageSync("session_3rd"));
-              app.login(that.onLoad); //获取session失败后，重新login 然后加载当前页面
+              util.log("分享页：获取群排行失败");
+              util.log(wx.getStorageSync("session_3rd"));
+              app.login(that.onShow); //获取session失败后，重新login 然后加载当前页面
             }else{
-              console.log("分享页：获取群排行失败 :" + result.data.code);
+              util.log("分享页：获取群排行失败 :" + result.data.code);
             }
           }
         }, function (result) {
           //群动态数据回调
-          console.info(result);
+          util.log(result);
           if (result.data.code === "SUCCESS") {
             wx.hideToast();
             that.setData({
@@ -108,11 +132,11 @@ Page({
             })
           }else{
             if (result.data.code === "000005") {
-              console.log("分享页：获取群动态失败");
-              console.log(wx.getStorageSync("session_3rd"));
-              app.login(that.onLoad); //获取session失败后，重新login 然后加载当前页面
+              util.log("分享页：获取群动态失败");
+              util.log(wx.getStorageSync("session_3rd"));
+              app.login(that.onShow); //获取session失败后，重新login 然后加载当前页面
             }else{
-              console.log("分享页：获取群动态失败 :" + result.data.code);
+              util.log("分享页：获取群动态失败 :" + result.data.code);
             }
           }
         });
@@ -128,7 +152,7 @@ Page({
   onShareAppMessage(res) {
     if (res.from === 'button') {
       // 来自页面内转发按钮
-      console.log(res.target)
+      util.log(res.target)
     }
     return {
       //转发标题
@@ -139,18 +163,18 @@ Page({
       path: '/pages/share/share',
       success: function (res) {
         // 转发成功
-        console.log("转发成功!")
-        // console.log(JSON.stringify(res));
-        // console.log(res.shareTickets[0]);
+        util.log("转发成功!")
+        // util.log(JSON.stringify(res));
+        // util.log(res.shareTickets[0]);
       },
       fail: function (res) {
         // 转发失败
-        console.log("转发失败!")
-        console.log(JSON.stringify(res));
+        util.log("转发失败!")
+        util.log(JSON.stringify(res));
       },
       complete: function () {
         //转发结束后的回调函数
-        console.log("转发操作!")
+        util.log("转发操作!")
       }
     }
   },
@@ -199,6 +223,21 @@ Page({
       }
       //关闭 
       if (currentStatu == "ok") {
+
+
+        if (!this.data.friendNum) {
+          wx.showToast({
+            title: '好友数不能为空',
+            image: './../../static/img/no64.png',
+            duration: 1000
+          })
+          this.setData(
+            {
+              showModalStatus: false,
+              friendNum: null
+            })
+          return;
+        }
         this.userSign();
 
       }
@@ -218,7 +257,7 @@ Page({
     util.ajax("checkIsSign", {
       session_3rd: wx.getStorageSync("session_3rd")
     }, "POST", function (res) {
-      console.log(res);
+      util.log(res);
       if (res.data.code == "SUCCESS") {
         //SUCCESS 是没签到
         that.setData(
@@ -240,26 +279,20 @@ Page({
   //签到
   userSign() {
     var that = this;
-    wx.showLoading({
-      title: '签到中',
-    })
     that.setData({
-      showModalStatus: false,
-    })
-    if (!that.data.friendNum) {
-      wx.showToast({
-        title: '好友数不能为空',
-        image: './../../static/img/no64.png',
-        duration: 1000
-      })
-      return;
-    }
+        'showModalStatus': false,
+        'tabSetting.btn.disabled': true,
+        'tabSetting.btn.loading': true,
+        'tabSetting.btn.btnText': '签到中'
+    });
+    
+    return ;
     util.ajax('SignCommit', {
       intradayfriendNumber: that.data.friendNum,
       session_3rd: wx.getStorageSync("session_3rd")
     }, 'POST', function (res) {
-      console.info("签到")
-      console.log(res);
+      util.info("签到")
+      util.log(res);
       that.loadCurriculumRankingList(function (result) {
         that.setData({
           'IsFinancialPlanner': result.data.body.IsFinancialPlanner,
@@ -267,6 +300,7 @@ Page({
           'tabSetting.rank.data': result.data.body.data,
           'tabSetting.rank.load': false,
           'tabSetting.btn.disabled': true,
+          'tabSetting.btn.loading': false,
           'tabSetting.btn.btnText': '签到'
         })
         wx.hideLoading()
@@ -281,12 +315,12 @@ Page({
       //complete
     }, function () {
       //fail
-      // wx.showToast({
-      //   // title: '今日好友数' + that.data.friendNum,
-      //   title: '签到失败',
-      //   icon: 'success',
-      //   duration: 2000
-      // })
+      wx.hideLoading();
+      wx.showToast({
+        title: '签到失败，请稍后再试',
+        image: './../../static/img/no64.png',
+        duration: 1000
+      });
     })
   },
   bindKeyInput(e) {
@@ -297,7 +331,7 @@ Page({
   //群动态上拉加载
   lower(e) {
     var that = this;
-    if (that.data.tabSetting.dynamicgroup.loadNextPage) {
+    if (that.data.tabSetting.dynamicgroup.loadNextPage || that.data.tabSetting.dynamicgroup.PageNum > that.data.tabSetting.dynamicgroup.total) {
       return;
     }
     this.setData(
@@ -306,14 +340,17 @@ Page({
       }
     );
     this.loadDynamicgroupDate(function (result) {
-      // console.log(result);
-      that.data.tabSetting.dynamicgroup.data.push.apply(that.data.tabSetting.dynamicgroup.data, result.data.body.data)
-      //群动态数据回调
-      that.setData({
-        'tabSetting.dynamicgroup.data': that.data.tabSetting.dynamicgroup.data,
-        'tabSetting.dynamicgroup.total': result.data.body.Total,
-        'tabSetting.dynamicgroup.loadNextPage': false
-      })
+      util.log(result);
+      if (result && result.data.body.data.length!=0){
+        that.data.tabSetting.dynamicgroup.data.push.apply(that.data.tabSetting.dynamicgroup.data, result.data.body.data)
+        //群动态数据回调
+        that.setData({
+          'tabSetting.dynamicgroup.data': that.data.tabSetting.dynamicgroup.data,
+          'tabSetting.dynamicgroup.total': result.data.body.Total,
+          'tabSetting.dynamicgroup.loadNextPage': false
+        })
+      }
+      
     });
   },
   // 刷新群动态
@@ -322,7 +359,7 @@ Page({
     wx.getShareInfo({
       shareTicket: app.globalData.shareTicket,
       fail(res) {
-        console.log(res);
+        util.log(res);
       },
       complete(res) {
         //请求服务器 解密数据
@@ -332,7 +369,7 @@ Page({
           session_3rd: wx.getStorageSync("session_3rd")
         }, 'POST', function (res) {
           // success
-          console.info(res);
+          util.info(res);
           if (typeof fn === "function") fn(res);
         }, function () {
           // complete
@@ -346,10 +383,10 @@ Page({
     wx.getShareInfo({
       shareTicket: app.globalData.shareTicket,
       fail(res) {
-        console.log(res);
+        util.log(res);
       },
       complete(res) {
-        console.log(that.data.tabSetting.dynamicgroup.PageNum)
+        util.log(that.data.tabSetting.dynamicgroup.PageNum)
         that.setData({
           'tabSetting.dynamicgroup.PageNum': that.data.tabSetting.dynamicgroup.PageNum + 1
         })
@@ -362,7 +399,7 @@ Page({
           limit: 10
         }, 'POST', function (res) {
           // success
-          // console.info(res);
+          // util.info(res);
 
           if (typeof fn === "function") fn(res);
         }, function () {

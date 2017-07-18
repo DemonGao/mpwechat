@@ -18,7 +18,7 @@
           <image wx:else="{{userInfo}}" src="{{result.imgUrl}}" class="demon_img"></image>
         </view>
         <view wx:if="{{userInfo}}" class="demon_userInfo_content">
-          <text class="text" style="color:#fff;font: 32rpx 'PingFang'; text-align:center">暂无数据！开通工作室后才能查看您的获客数据</text>
+          <text class="text" style="color:#fff;font: 32rpx 'PingFang'; text-align:center">暂无数据！</text>
         </view>
         <view wx:else="{{userInfo}}" class="demon_userInfo_content">
           <view class="demon_userInfo_content_item">

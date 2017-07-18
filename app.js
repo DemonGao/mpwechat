@@ -7,14 +7,40 @@ App({
     API_URL: "https://xcx.d1money.com/", //请求服务器地址
     session_3rd: wx.getStorageSync('session_3rd'),  //获取本地存储的session_3rd
     userInfo: null,
-    shareTicket: "",
+    shareTicket: "",  //当前用户缓存的
     scene:0,
   },
   /**
    * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）
    */
   onLaunch(options) {
+    // var that = this;
+    wx.showShareMenu({
+      withShareTicket: true
+    })
+    util.log("onLaunch--shareTicket：" + options.shareTicket)
+    wx.setStorageSync("d1money_shareTicket", options.shareTicket);
+  },
+  /**
+   * 当小程序启动，或从后台进入前台显示，会触发 onShow
+   */
+  onShow(options) {
     var that = this;
+    that.globalData.scene = options.scene;
+    util.log("入口号：" + options.scene)
+    // util.log("that.globalData.scene:" + that.globalData.scene)
+    // that.globalData.shareTicket = null;
+    //要求小程序返回分享目标信息
+    
+    //用户进入场景值判断 options.scene
+    switch (options.scene) {
+      // 1044: 带shareTicket的小程序消息卡片
+      case 1044:
+        util.log("1044: 带shareTicket的小程序消息卡片: options.shareTicket" + options.shareTicket);
+        util.log("1044: 带shareTicket的小程序消息卡片: d1money_shareTicket" + wx.getStorageSync("d1money_shareTicket"));
+        that.globalData.shareTicket = wx.getStorageSync("d1money_shareTicket");
+        break;
+    }
   },
   //登陆态验证   检测当前用户登录态是否有效
   checkSession(fn) {
@@ -23,27 +49,27 @@ App({
     wx.checkSession({
       success: function () {
         // session 未过期，并且在本生命周期一直有效
-        console.log("checkSession方法：wx.checkSession未过期 " + wx.getStorageSync("session_3rd"));
-        console.log('ajax:checkSession');
+        util.log("checkSession方法：wx.checkSession未过期 " + wx.getStorageSync("session_3rd"));
+        util.log('ajax:checkSession');
         util.ajax('checkSession', {
           session_3rd: wx.getStorageSync("session_3rd")
         }, 'POST', function (res) {
           // 如果session_3rd未过期
           if (res.data.code == "SUCCESS") {
-            console.log("session_3rd未过期，调用app.checkIsFinancialPlanner函数");
+            util.log("session_3rd未过期，调用app.checkIsFinancialPlanner函数");
             
             //检查是否有工作室 若无工作室则跳转到error页面
             that.checkIsFinancialPlanner(fn);
           } else {
             //session_3rd 过期或者未授权
-            console.log("session_3rd已过期，调用app.login函数");
+            util.log("session_3rd已过期，调用app.login函数");
             that.login(fn);
           }
         })
       },
       fail: function () {
         //登录态过期 重新登录(获取登陆凭证)
-        // console.log("session过期");
+        // util.log("session过期");
         that.login(fn);
       },
       complete: function () {
@@ -59,10 +85,12 @@ App({
       success: function (res) {
         if (res.code) {
           let code = res.code;  //登录凭证（code）
-          console.log(res.code);
+          util.log(res.code);
           wx.getUserInfo({
             //获取用户信息
             success(res2) {
+              util.log(res2.userInfo);
+              wx.setStorageSync("d1money_userInfo", res2.userInfo);
               //把加密串转成URI编码
               let encryptedData = encodeURIComponent(res2.encryptedData)
               let iv = res2.iv;
@@ -70,14 +98,14 @@ App({
               that.UserLogin(code, encryptedData, iv, fn)
             },
             fail: function () {
-              console.log("授权失败");
+              util.log("授权失败");
               wx.reLaunch({
                 url: '../common/error/error?type=userInfo'
               })
             }
           })
         } else {
-          console.log('获取用户登录态失败！' + res.errMsg)
+          util.log('获取用户登录态失败！' + res.errMsg)
         }
       }
     })
@@ -105,7 +133,7 @@ App({
       //登陆验证成功 返回 session_3rd 并本地存储
       if (result.code === "SUCCESS") {
         //存储session_3rd
-        console.log("session_3rd: " + result.body.session_3rd)
+        util.log("session_3rd: " + result.body.session_3rd)
         wx.setStorageSync("session_3rd", result.body.session_3rd)
         //检查是否有工作室 若无工作室则跳转到error页面
         that.checkIsFinancialPlanner(fn);
@@ -124,31 +152,10 @@ App({
     }, function () {
       //complete
       // wx.hideToast();
-      console.log("checkIsFinancialPlanner");
+      util.log("checkIsFinancialPlanner");
     })
   },
-  /**
-   * 当小程序启动，或从后台进入前台显示，会触发 onShow
-   */
-  onShow(options) {
-    var that = this;
-    that.globalData.scene = options.scene;
-    console.log("入口号："+options.scene)
-    // console.log("that.globalData.scene:" + that.globalData.scene)
-    that.globalData.shareTicket = null;
-    //要求小程序返回分享目标信息
-    wx.showShareMenu({
-      withShareTicket: true
-    })
-    //用户进入场景值判断 options.scene
-    switch (options.scene) {
-      // 1044: 带shareTicket的小程序消息卡片
-      case 1044:
-        console.log("1044: 带shareTicket的小程序消息卡片:" + options.shareTicket);
-        that.globalData.shareTicket = options.shareTicket;
-        break;
-    }
-  },
+  
   //通过 1044: 带shareTicket的小程序消息卡片 过来的事件
   jumpSharePageFn(shareTicket, rankcb, groupcb) {
     var that = this;
@@ -157,24 +164,24 @@ App({
       shareTicket,
       fail(res) {
         wx.hideLoading();
-        // console.log(res);
-        console.log("wx.getShareInfo获取失败");
+        // util.log(res);
+        util.log("wx.getShareInfo获取失败");
         wx.reLaunch({
           url: '../index/index'
         })
       },
       success(res) {
-        // console.log("分享：");
-        // console.log(res)
-        // console.log('shareTicket: \n' + that.globalData.shareTicket);
+        // util.log("分享：");
+        // util.log(res)
+        // util.log('shareTicket: \n' + that.globalData.shareTicket);
         that.checkSession(function (result) {
           wx.showLoading({
             title: '加载中',
           })
-          // console.log("------- 分享信息 encryptedData iv session_3rd-----------");
-          // console.log(encodeURIComponent(res.encryptedData));
-          // console.log(res.iv);
-          // console.log(wx.getStorageSync("session_3rd"));
+          // util.log("------- 分享信息 encryptedData iv session_3rd-----------");
+          // util.log(encodeURIComponent(res.encryptedData));
+          // util.log(res.iv);
+          // util.log(wx.getStorageSync("session_3rd"));
           //请求服务器 解密数据
           util.ajax('loadCurriculumRankingList', {
             openGIdEncryptedData: encodeURIComponent(res.encryptedData),

@@ -41,7 +41,7 @@
               <text class="nick" style="font: 32rpx 'PingFang';">{{userInfo.nickName}}</text>
             </view>
             <view class="number" style="margin-bottom:0;text-align:left">
-              <text>暂无排行！开通工作室后才能参与获客排行</text>
+              <text>暂无排行！</text>
             </view>
           </view>
         </view>
@@ -57,7 +57,7 @@
     </view>
     <!--群动态-->
     <view class="demon_tab_content dynamicgroup" wx:if="{{tabSetting.selectIndex==1}}">
-      <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};" bindscrolltolower="lower" scroll-with-animation="true">
+      <scroll-view scroll-y="true" style="height: {{tabSetting.rankHeight}};" bindscrolltolower="lower" lower-threshold="150" scroll-with-animation="true">
         <view class="nomsgBox" wx:if="{{tabSetting.dynamicgroup.data.length==0 && !tabSetting.dynamicgroup.load}}">
           <image class="nomsgimg" src="./../../static/img/nomsg.png"></image>
           <view class="nomsgtext">这里有点冷清 ～</view>
