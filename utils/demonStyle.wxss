@@ -1,0 +1,43 @@
+/*居中盒子*/
+.demon_blockcenter{
+  margin:100rpx 35rpx 0;
+  /*border: 1px solid #000;*/
+  border-radius: 5rpx;
+  box-shadow: 0px 0px 5px #ccc;
+}
+
+/*选项卡样式设计*/
+.demon_tab{
+  position: relative;
+  top: 100rpx;
+  display: flex;
+  width: 750rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  flex-flow: row nowrap;
+  align-content:space-between;
+  text-align: center;
+  font-size: 14px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.demon_tab .demon_tab_item{
+  flex: 1;
+  position: relative;
+}
+.demon_tab .demon_tab_item.active{
+  color: rgb(7, 185, 5);
+}
+.demon_tab .demon_tab_item::before{
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 6rpx;
+  width: 100%;
+  background-color: rgb(211, 211, 211);
+}
+.demon_tab .demon_tab_item.active::before{
+  background-color: rgb(7, 185, 5);
+}
