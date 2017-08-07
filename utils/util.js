@@ -18,8 +18,8 @@ function formatNumber(n) {
 
 /*----------------------------微信api封装----------------------------*/
 var app = getApp();
-// const API_URL = "https://xcx.d1money.com/services/hkphb/";
-const API_URL = "https://127.0.0.1:8443/services/hkphb/";
+const API_URL = "https://xcx.d1money.com/services/hkphb/";
+// const API_URL = "https://127.0.0.1:8443/services/hkphb/";
 //微信本地存储 - 添加
 function setStorage(key, data) {
   wx.setStorage({
