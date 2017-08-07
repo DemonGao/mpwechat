@@ -4,7 +4,6 @@ var util = require('utils/util.js')
 let shareTicket = '';
 App({
   globalData: {
-    API_URL: "https://xcx.d1money.com/", //请求服务器地址
     session_3rd: wx.getStorageSync('session_3rd'),  //获取本地存储的session_3rd
     userInfo: null,
     shareTicket: "",  //当前用户缓存的

@@ -34,6 +34,7 @@ Page({
       }
     },
     showModalStatus: false,
+    IsNeedShowModalStatus:true,
     friendNum: undefined,
     IsFinancialPlanner:false, //是否是理财师
     userInfo:null,            //非理财师用户信息
@@ -180,8 +181,25 @@ Page({
     }
   },
   powerDrawer: function (e) {
-    var currentStatu = e.currentTarget.dataset.statu;
-    this.util(currentStatu)
+    var that = this;
+    console.log(that.data.IsNeedShowModalStatus)
+    // return ;
+    if (that.data.IsNeedShowModalStatus){
+      var currentStatu = e.currentTarget.dataset.statu;
+      that.util(currentStatu)
+    }else{
+      util.log(that.data.tabSetting);
+      for (let i = 0; i < that.data.tabSetting.rank.data.length ; i++){
+        if (that.data.tabSetting.rank.data[i].userId == that.data.currentuserId){
+          util.log(that.data.tabSetting.rank.data[i].customerCount);
+          that.setData({
+            friendNum: that.data.tabSetting.rank.data[i].customerCount
+          })
+        }
+      }
+      
+      that.userSign();
+    }
   },
   util: function (currentStatu) {
     var that = this;
@@ -255,24 +273,34 @@ Page({
   //签到判断
   checkIsSign() {
     var that = this;
-    util.ajax("checkIsSign", {
+    util.ajax("checkIsSignnew", {
       session_3rd: wx.getStorageSync("session_3rd")
     }, "POST", function (res) {
       util.log(res);
-      console.log(res)
+      util.log(res)
       if (res.data.code == "SUCCESS") {
-        //SUCCESS 是没签到
+        //未签到
+        that.setData(
+          {
+            'tabSetting.btn.disabled': true,
+            'tabSetting.btn.btnText': '已签到'
+          }
+        );
+      } else if (res.data.code == "000017"){
+        // 用户未签到（从未签到过）
         that.setData(
           {
             'tabSetting.btn.disabled': false,
             'tabSetting.btn.btnText': '签到'
           }
         );
-      } else {
+      } else if (res.data.code == "000011"){
+        // 用户今日未签到
         that.setData(
           {
-            'tabSetting.btn.disabled': true,
-            'tabSetting.btn.btnText': '已签到'
+            'tabSetting.btn.disabled': false,
+            'tabSetting.btn.btnText': '签到',
+            'IsNeedShowModalStatus':false
           }
         );
       }
